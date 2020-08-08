@@ -11,9 +11,22 @@
           <div class="friendlist">
               <div class="listitem">
                   <img src="../assets/imgs/icon/search.png" alt="" class="portrait">
+                  <span class="listusername">用户名</span>
               </div>
           </div>
-          <div class="chat"></div>
+          <div class="chat">
+              <div class="chathead">
+                  <span class="chatname">用户名</span>
+              </div>
+              <div class="chatcontent"></div>
+              <div class="chatinput">
+                  <div class="tools"></div>
+                  <div class="form-group">
+  <textarea class="form-control" rows="5" id="textinput"></textarea>
+  <button type="button" class="btn btn-outline-primary btn-sm" id="submitbuttom">主要按钮</button>
+</div>
+              </div>
+          </div>
       </div>
   </div>
   <div class="col-sm-3"></div>
@@ -30,6 +43,7 @@ export default {
 <style scoped>
 #indexbox{
     height: 100%;
+            background-color: #f6f6f6;
 
 }
 .head{
@@ -46,51 +60,60 @@ export default {
     height: 100%;
     width: 100%;
     border-radius: 8px;
-    border: 1px black solid;
+        box-sizing: border-box;
+    box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.1);
+    background-color: white;
 }
 .navigator{
     height: 57px;
     width: 100%;
-    border: 1px solid black;
+    border-bottom: 1px solid rgba(100, 100, 100, 0.15);
+    box-sizing: border-box;
 }
 .friendlist{
     width: 32%;
     height: 644px;
     float: left;
-    border: 1px solid black;
+    box-sizing: border-box;
+    box-shadow:  4px 0px 15px -15px #5E5E5E;
 }
 .chat{
     height: 644px;
     width: calc(100% - 32%);
-    border: 1px solid black;
+
     float: left;
+    box-sizing: border-box;
 }
 
 
 .search{
     height: 36px;
     width: 36px;
-    border: 1px solid black;
     border-radius: 18px;
     float: left;
     transition: 300ms all;
-        margin-left: 10%;
-            margin-top: 9.5px;
+    margin-left: 10%;
+    margin-top: 9.5px;
     background-image: url('../assets/imgs/icon/search.png');
     background-size: 20px 20px;
     background-repeat: no-repeat;
     background-position: 8px 8px;
     outline: none;
+    border: 0;
+    background-color:rgba(200, 200, 200, 0.2);
     font-size: 16px;
+    box-sizing: border-box;
     
     }
 .search:hover{
     width: 280px;
-    padding: 10px 10px 10px 40px
+    padding: 10px 10px 10px 40px;
 }
 .search:focus{
-        width: 280px;
-    padding: 10px 10px 10px 40px
+    width: 280px;
+    padding: 10px 10px 10px 40px;
+    background-color: white;
+    border: 1px solid rgba(150, 150, 150, 0.4);
 }
 .myportrait{
     height: 34px;
@@ -102,14 +125,76 @@ export default {
 }
 .listitem{
     width: 100%;
-    height: 80px;
+    height: 60px;
     padding: 10px;
-    border: 1px black solid;
-    border-bottom: 1px solid black;
+    box-sizing: border-box;
+    border-bottom: 1px solid rgba(100, 100, 100, 0.15);
+}
+.listitem:hover{
+    background-color: rgba(200, 200, 200, 0.1);
+    transition: 300ms all;
 }
 .portrait{
-    height: 50px;
-    width: 50px;
+    height: 30px;
+    width: 30px;
     margin-top: 5px;
+    float: left;
+}
+.listusername{
+    float: left;
+    font-size: 15px;
+    line-height: 15px;
+    font-weight: 600;
+    font-family: NSimSun ;
+    margin-left: 5%;
+}
+.chathead{
+    height: 40px;
+    width: 100%;
+    border-bottom: 1px solid rgba(100, 100, 100, 0.15);
+    padding: 10px;
+    box-sizing: border-box;
+}
+.chatcontent{
+    height: 425px;
+    width: 100%;
+
+    box-sizing: border-box;
+}
+.chatinput{
+    height: 175px;
+    width: 100%;
+
+}
+.chatname{
+    font-size: 15px;
+    font-weight: 600;
+    font-family: NSimSun ;
+    line-height: 15px;
+    margin-left: 3%;
+}
+.tools{
+    height: 35px;
+    width: 100%;
+    border-top: 1px solid rgba(100, 100, 100, 0.15);
+    box-sizing: border-box;
+}
+#textinput{
+    width: 100%;
+    max-height: 100px;
+    min-height: 100px;
+    resize: none;
+    border: 0;
+    background-color: transparent;
+    outline: none;
+}
+#textinput:focus{
+
+}
+#submitbuttom{
+    top: 3px;
+    float: right;
+    margin-top: 4px;
+    margin-right: 15px;
 }
 </style>
