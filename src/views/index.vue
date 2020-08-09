@@ -21,10 +21,8 @@
               <div class="chatcontent"></div>
               <div class="chatinput">
                   <div class="tools"></div>
-                  <div class="form-group">
-  <textarea class="form-control" rows="5" id="textinput"></textarea>
+  <textarea rows="5" id="textinput"></textarea>
   <button type="button" class="btn btn-outline-primary btn-sm" id="submitbuttom">主要按钮</button>
-</div>
               </div>
           </div>
       </div>
@@ -45,10 +43,6 @@ export default {
     height: 100%;
             background-color: #f6f6f6;
 
-}
-.head{
-    width: 100%;
-    height: 13.72%;
 }
 .rowstyle{
     height: 100%;
@@ -114,6 +108,7 @@ export default {
     padding: 10px 10px 10px 40px;
     background-color: white;
     border: 1px solid rgba(150, 150, 150, 0.4);
+
 }
 .myportrait{
     height: 34px;
@@ -156,7 +151,7 @@ export default {
     box-sizing: border-box;
 }
 .chatcontent{
-    height: 425px;
+    height: 415px;
     width: 100%;
 
     box-sizing: border-box;
@@ -164,7 +159,7 @@ export default {
 .chatinput{
     height: 175px;
     width: 100%;
-
+    padding: 10px;
 }
 .chatname{
     font-size: 15px;
@@ -195,6 +190,6 @@ export default {
     top: 3px;
     float: right;
     margin-top: 4px;
-    margin-right: 15px;
+    margin-right: 18px;
 }
 </style>
