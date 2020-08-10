@@ -1,178 +1,324 @@
 <template>
-    <div class="login">
-    <div class="row rowstyle">
-  <div class="col-sm-3"></div>
-  <div class="col-sm-6">
-      <div class="loginbox">
+  <div class="login">
+    <el-row :gutter="0" class="rowstyle">
+      <!-- <el-col :xs="0" :sm="5" :lg="5" :xl="5"><div> </div></el-col> -->
+      <el-col :xs="{span:24,offset:0}" :sm="{span:14,offset:5}" style="height:100%">
+        <div class="loginbox">
           <div class="icon"></div>
           <div class="inputarea">
-              <div class="loginarea" :style="{visibility:loginshow,top:logintop + 'px',opacity:loginopacity}">
-              <input type="text" class="input" name="loginid" style="top:250px" placeholder="请输入账号">
-              <input type="password" class="input" name="password" style="top:350px" placeholder="请输入密码">
+            <div
+              class="loginarea"
+              :style="{visibility:loginshow,top:logintop + 'px',opacity:loginopacity}"
+            >
+              <div class="title">login</div>
+              <input type="text" class="input" name="loginid" style="top:250px" placeholder="请输入账号" />
+              <input
+                type="password"
+                class="input"
+                name="password"
+                style="top:350px"
+                placeholder="请输入密码"
+              />
+            </div>
+            <div
+              class="registerarea"
+              :style="{visibility:registershow,top:registertop + 'px',opacity:registeropacity}"
+            >
+              <div class="title" style="top:50px">register</div>
+              <div
+                :style="{visibility:inner1,top:inner1top+'px',opacity:inner1opacity,transition:'1s all'}"
+                class="innerpart1"
+              >
+                <input
+                  type="text"
+                  class="input"
+                  name="loginid"
+                  style="top:200px"
+                  placeholder="请输入账号"
+                />
+                <input
+                  type="text"
+                  class="input"
+                  name="username"
+                  style="top:300px"
+                  placeholder="请输入昵称"
+                />
+                <input
+                  type="password"
+                  class="input"
+                  name="password"
+                  style="top:400px"
+                  placeholder="请输入密码"
+                />
+                <div class="sexinput">
+                  <span style="display:block;margin-left:10%;float:left">男</span>
+                  <input type="radio" name="sex" value="1" class="sexitem" style="margin-left:5%" />
+                  <span style="display:block;margin-left:10%;float:left">女</span>
+                  <input type="radio" name="sex" value="0" class="sexitem" style="margin-left:5%" />
+                </div>
               </div>
-              <div class="registerarea" :style="{visibility:registershow,top:registertop + 'px',opacity:registeropacity}">
-              <input type="text" class="input" name="loginid" style="top:200px" placeholder="请输入账号">
-              <input type="text" class="input" name="username" style="top:300px">
-              <input type="password" class="input" name="password" style="top:400px">
-              <div class="sexinput">
-              <span style="display:block;position:absolute;left:110px">男</span><input type="radio" name="sex" value="1" class="sexitem" style="left:130px">
-              <span style="display:block;position:absolute;left:210px">女</span><input type="radio" name="sex" value="0" class="sexitem" style="left:230px">
+              <div
+                :style="{visibility:inner2,top:inner2top+'px',opacity:inner2opacity,transition:'1s all'}"
+                class="innerpart2"
+              >
+                <el-upload
+                  class="avatar-uploader"
+                  action="https://jsonplaceholder.typicode.com/posts/"
+                  :show-file-list="false"
+                  :on-success="handleAvatarSuccess"
+                  :before-upload="beforeAvatarUpload"
+                >
+                  <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+                  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                </el-upload>
               </div>
-              </div>
-              <div class="submitlogin" :style="{top:btntop+'px'}"></div>
-              <span class="tiptext"  @click="changemode">{{this.tiptext}}</span>
+            </div>
+            <div class="submitlogin" :style="{top:btntop+'px'}" @click="btnclick"></div>
+            <span class="tiptext" @click="changemode">{{this.tiptext}}</span>
           </div>
-      </div>
+        </div>
+      </el-col>
+      <!-- <el-col :xs="0" :sm="5" :lg="5" :xl="5"><div> </div></el-col> -->
+    </el-row>
   </div>
-  <div class="col-sm-3"></div>
-</div>
-    </div>
 </template>
 
 <script>
 export default {
-    data(){
-        return{
-            btntop:460,
-            loginshow:'visible',
-            registershow:'hidden',
-            logintop:0,
-            registertop:50,
-            registeropacity:0,
-            loginopacity:1,
-            flag:true,
-            tiptext:'没有账号？去注册'
-        }
+  data() {
+    return {
+      btntop: 460,
+      loginshow: "visible",
+      registershow: "hidden",
+      logintop: 0,
+      registertop: 50,
+      registeropacity: 0,
+      loginopacity: 1,
+      flag: true,
+      tiptext: "没有账号？去注册",
+      btnflag: false,
+      inner1top: 0,
+      inner1opacity: 1,
+      inner1: "visible",
+      inner2top: 50,
+      inner2opacity: 0,
+      inner2: "hidden",
+      imageUrl: ''
+    };
+  },
+  methods: {
+    changemode() {
+      if (this.flag) {
+        this.flag = false;
+        this.logintop = 50;
+        (this.loginopacity = 0),
+          setTimeout(() => {
+            this.loginshow = "hidden";
+          }, 1000);
+        this.registershow = "visible";
+        this.registertop = 0;
+        this.registeropacity = 1;
+        this.btntop = 520;
+        this.tiptext = "已有账号？去登陆";
+      } else {
+        this.flag = true;
+        this.registertop = 50;
+        this.registeropacity = 0;
+        setTimeout(() => {
+          this.registershow = "hidden";
+        }, 1000);
+        this.loginshow = "visible";
+        this.logintop = 0;
+        this.loginopacity = 1;
+        this.btntop = 460;
+        this.tiptext = "没有账号？去注册";
+        (this.inner1top = 0),
+          (this.inner1opacity = 1),
+          (this.inner1 = "visible"),
+          (this.inner2top = 50),
+          (this.inner2opacity = 0),
+          (this.inner2 = "hidden");
+      }
     },
-    methods:{
-        changemode(){
-            if(this.flag){
-                this.flag = false
-                this.logintop = 50
-                this.loginopacity = 0,
-                setTimeout(() => {
-                    this.loginshow = 'hidden'
-                }, 1000);
-                this.registershow = 'visible'
-                this.registertop = 0
-                this.registeropacity = 1
-                this.btntop = 520
-                this.tiptext = '已有账号？去登陆'
-            }
-            else{
-                this.flag = true
-                this.registertop = 50
-                this.registeropacity = 0
-                setTimeout(() => {
-                    this.registershow = 'hidden'
-                }, 1000);
-                this.loginshow = 'visible'
-                this.logintop = 0
-                this.loginopacity = 1
-                this.btntop = 460
-                this.tiptext = '没有账号？去注册'
-            }
+    btnclick() {
+      if (this.flag) {
+        console.log("666");
+      } else {
+        if (!this.btnflag) {
+          this.inner1top = 50;
+          this.inner1opacity = 0;
+          setTimeout(() => {
+            this.inner1 = "hidden";
+          }, 1000);
+          this.inner2 = "visible";
+          this.inner2top = 0;
+          this.inner2opacity = 1;
         }
-    }
-}
+      }
+    },
+    handleAvatarSuccess(res, file) {
+        this.imageUrl = URL.createObjectURL(file.raw);
+      },
+      beforeAvatarUpload(file) {
+        const isJPG = file.type === 'image/jpeg';
+        const isLt2M = file.size / 1024 / 1024 < 2;
+
+        if (!isJPG) {
+          this.$message.error('上传头像图片只能是 JPG 格式!');
+        }
+        if (!isLt2M) {
+          this.$message.error('上传头像图片大小不能超过 2MB!');
+        }
+        return isJPG && isLt2M;
+      }
+  },
+};
 </script>
 
 <style scoped>
-.login{
-    position: relative;
-    height: 100%;
-    background-color: #f6f6f6;
+.login {
+  position: relative;
+  height: 100%;
+  background-color: #f6f6f6;
 }
-.rowstyle{
-    position: relative;
-    height: 100%;
-    max-height: 700px;
-    position: relative;
-    top: 100px;
+.rowstyle {
+  position: relative;
+  height: 100%;
+  max-height: 700px;
+  position: relative;
+  top: 100px;
 }
-.loginbox{
-    position: relative;
-    height: 100%;
-    width: 100%;
-    border-radius: 8px;
-        box-sizing: border-box;
-    box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.1);
-    background-color: white;
+.loginbox {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  border-radius: 8px;
+  box-sizing: border-box;
+  box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.1);
+  background-color: white;
 }
-.icon{
-    position: relative;
-    width: 60%;
-    height: 100%;
-    box-sizing: border-box;
-    box-shadow: 3px 0 10px -10px;
-    float: left;
+.icon {
+  position: relative;
+  width: 60%;
+  height: 100%;
+  box-sizing: border-box;
+  box-shadow: 3px 0 10px -10px;
+  float: left;
 }
-.inputarea{
-    position: relative;
-    width: 40%;
-    height: 100%;
-    float: left;
+.inputarea {
+  position: relative;
+  width: 40%;
+  height: 100%;
+  float: left;
 }
-.loginarea{
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    transition: all 1s;
+.loginarea {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transition: all 1s;
 }
-.registerarea{
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    transition: all 1s;
+.registerarea {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transition: all 1s;
 }
-.submitlogin{
-    height: 60px;
-    width: 60px;
-    background-image: url('../assets/imgs/icon/login_button.png');
-    background-size: 60px 60px;
-    position: absolute;
-    left: calc(50% - 25px);
+.submitlogin {
+  height: 60px;
+  width: 60px;
+  background-image: url("../assets/imgs/icon/login_button.png");
+  background-size: 60px 60px;
+  position: relative;
+  margin: 0 auto;
+  cursor: pointer;
+  transition: all 1s;
+}
+.submitlogin:hover {
+  background-image: url("../assets/imgs/icon/login_button_focus.png");
+}
+.input {
+  height: 40px;
+  width: 70%;
+  position: absolute;
+  left: 15%;
+  border: 0;
+  outline: none;
+  border-bottom: 1px solid rgba(100, 100, 100, 0.3);
+  font-size: 18px;
+}
+.sexinput {
+  position: relative;
+  margin: 0 auto;
+  top: 470px;
+  margin-left: 20%;
+}
+.sexitem {
+  height: 15px;
+  width: 15px;
+  position: relative;
+  top: 5px;
+  float: left;
+}
+.tiptext {
+  width: 100%;
+  cursor: pointer;
+  display: block;
+  font-size: 15px;
+  position: absolute;
+  text-align: center;
+  line-height: 15px;
+  top: 630px;
+  color: rgba(100, 100, 100, 0.7);
+}
+.tiptext:hover {
+  color: rgba(70, 70, 70, 0.8);
+}
+.title {
+  font-size: 60px;
+  color: rgba(100, 100, 100, 0.5);
+  margin: 0 auto;
+  text-align: center;
+  font-weight: 800;
+  margin-top: 70px;
+}
+.innerpart1 {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+}
+.innerpart2 {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+}
+/deep/.el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
     cursor: pointer;
-    transition: all 1s;
-}
-.submitlogin:hover{
-    background-image: url('../assets/imgs/icon/login_button_focus.png');
-}
-.input{
-    height: 40px;
-    width: 70%;
-    position: absolute;
-    left: 15%;
-    border: 0;
-    outline: none;
-    border-bottom: 1px solid rgba(100, 100, 100, 0.3);
-    font-size: 18px;
-}
-.sexinput{
-    height: 20px;
-    width: 100%;
-    position: absolute;
-    top: 470px;
-}
-.sexitem{
-    height: 15px;
-    width: 15px;
-    position: absolute;
-    top: 5px;
-    margin-left: 5px;
-}
-.tiptext{
-    width: 100%;
-    cursor: pointer;
-    display: block;
-    font-size: 15px;
-    position: absolute;
+    position: relative;
+    overflow: hidden;
+    margin: 0 auto;
+  }
+.avatar-uploader{
+    position: relative;
     text-align: center;
-    line-height: 15px;
-    top: 630px;
-    color: rgba(100, 100, 100, 0.7);
+    top: 250px;
 }
-.tiptext:hover{
-    color: rgba(70, 70, 70, 0.8);
-}
+/deep/.el-upload:hover{
+    /* border-color: #409EFF !important; */
+    border: 1px dashed #409EFF;
+  }
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+  }
+  .avatar {
+    width: 178px;
+    height: 178px;
+    display: block;
+  }
 </style>

@@ -2,18 +2,12 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
 
 Vue.config.productionTip = false
-import 'bootstrap/dist/css/bootstrap.min.css'
 
-// eslint-disable-next-line no-unused-vars
-import $ from 'jquery'
-
-import 'bootstrap/dist/js/bootstrap.bundle'
-
-import 'bootstrap/dist/js/bootstrap.min.js'
-
-
+Vue.use(ElementUI);
 new Vue({
   router,
   store,

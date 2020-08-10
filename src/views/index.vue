@@ -2,7 +2,7 @@
     <div id="indexbox">
         <div class="row rowstyle">
   <div class="col-sm-3"></div>
-  <div class="col-sm-6">
+  <div class="col-sm-6" >
       <div class="chatbox">
           <div class="navigator">
               <img src="../assets/imgs/icon/search.png" alt="" class="myportrait" disabled>
