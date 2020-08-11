@@ -11,13 +11,14 @@
               :style="{visibility:loginshow,top:logintop + 'px',opacity:loginopacity}"
             >
               <div class="title">login</div>
-              <input type="text" class="input" name="loginid" style="top:250px" placeholder="请输入账号" />
+              <input type="text" class="input" name="loginid" style="top:250px" placeholder="请输入账号" v-model="loginid"/>
               <input
                 type="password"
                 class="input"
                 name="password"
                 style="top:350px"
                 placeholder="请输入密码"
+                v-model="loginpsw"
               />
             </div>
             <div
@@ -35,6 +36,7 @@
                   name="loginid"
                   style="top:200px"
                   placeholder="请输入账号"
+                  v-model='registerid'
                 />
                 <input
                   type="text"
@@ -42,6 +44,7 @@
                   name="username"
                   style="top:300px"
                   placeholder="请输入昵称"
+                  v-model='registername'
                 />
                 <input
                   type="password"
@@ -49,12 +52,13 @@
                   name="password"
                   style="top:400px"
                   placeholder="请输入密码"
+                  v-model='registerpsw'
                 />
                 <div class="sexinput">
                   <span style="display:block;margin-left:10%;float:left">男</span>
-                  <input type="radio" name="sex" value="1" class="sexitem" style="margin-left:5%" />
+                  <input type="radio" name="sex" value="1" class="sexitem" style="margin-left:5%" v-model="registersex"/>
                   <span style="display:block;margin-left:10%;float:left">女</span>
-                  <input type="radio" name="sex" value="0" class="sexitem" style="margin-left:5%" />
+                  <input type="radio" name="sex" value="0" class="sexitem" style="margin-left:5%" v-model="registersex"/>
                 </div>
               </div>
               <div
@@ -84,6 +88,7 @@
 </template>
 
 <script>
+import {submitregister} from '../network/api/login'
 export default {
   data() {
     return {
@@ -103,7 +108,13 @@ export default {
       inner2top: 50,
       inner2opacity: 0,
       inner2: "hidden",
-      imageUrl: ''
+      imageUrl: '',
+      loginid:'',
+      loginpsw:'',
+      registersex:'',
+      registerid:'',
+      registername:'',
+      registerpsw:''
     };
   },
   methods: {
@@ -122,6 +133,7 @@ export default {
         this.tiptext = "已有账号？去登陆";
       } else {
         this.flag = true;
+        this.btnflag = false
         this.registertop = 50;
         this.registeropacity = 0;
         setTimeout(() => {
@@ -145,6 +157,7 @@ export default {
         console.log("666");
       } else {
         if (!this.btnflag) {
+          this.btnflag = true
           this.inner1top = 50;
           this.inner1opacity = 0;
           setTimeout(() => {
@@ -153,6 +166,16 @@ export default {
           this.inner2 = "visible";
           this.inner2top = 0;
           this.inner2opacity = 1;
+        }
+        else{
+          submitregister({
+              registersex:this.registersex,
+              registerid:this.registerid,
+              registername:this.registername,
+              registerpsw:this.registerpsw
+          }).then(res=>{
+            console.log(res);
+          })
         }
       }
     },
