@@ -6,7 +6,8 @@ const users = sequelize.define(
     {
         userid:{
             type:DataTypes.STRING,
-            allowNull:false
+            allowNull:false,
+            primaryKey: true
         },
         username:{
             type:DataTypes.STRING,
@@ -28,7 +29,8 @@ const users = sequelize.define(
         }
     },
     {
-        timestamps: false
+        timestamps: false,
+        tableName:'users'
     }
 )
 

@@ -1,5 +1,5 @@
 const users = require('../utils/mysql/tables/users')
-
+const sequelize = require('../utils/mysql/sequelize')
 const api = {
     submitregister: function (userid,username,password,portrait,sex){
         return users.create({
@@ -7,7 +7,8 @@ const api = {
             username,
             password,
             portrait,
-            sex
+            sex,
+            registertime:sequelize.fn('NOW')
         })
     }
 }

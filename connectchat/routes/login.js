@@ -16,15 +16,18 @@ router.post('/submitportrait',uploadcheck, (req, res)=> {
   })
 });
 router.post('/register', (req, res)=> {
-  console.log(req.body);
-  let {userid,username,password,portrait,sex}=req.body
+  let {registerid:userid,registername:username,registerpsw:password,portrait,registersex:sex}=req.body
   console.log(userid,username,password,portrait,sex);
-  loginapi.submitregister(userid,username,password,portrait,sex).then(res=>{
+  loginapi.submitregister(userid,username,password,portrait,sex).then(result=>{
     res.send({
-      res
+      success:1,
+      error_code:0
     })
-  }).catch(err=>{
-    console.log(err);
+  }).catch(error=>{
+    res.send({
+      success:0,
+      error_code:100
+    })
   })
   
 });
