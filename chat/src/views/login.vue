@@ -67,10 +67,11 @@
               >
                 <el-upload
                   class="avatar-uploader"
-                  action="https://jsonplaceholder.typicode.com/posts/"
+                  action="http://127.0.0.1:3000/submitportrait"
                   :show-file-list="false"
                   :on-success="handleAvatarSuccess"
                   :before-upload="beforeAvatarUpload"
+                  name='portrait'
                 >
                   <img v-if="imageUrl" :src="imageUrl" class="avatar" />
                   <i v-else class="el-icon-plus avatar-uploader-icon"></i>
@@ -121,8 +122,9 @@ export default {
     changemode() {
       if (this.flag) {
         this.flag = false;
+        this.tiptext = "已有账号？去登陆"
         this.logintop = 50;
-        (this.loginopacity = 0),
+        this.loginopacity = 0
           setTimeout(() => {
             this.loginshow = "hidden";
           }, 1000);
@@ -130,7 +132,7 @@ export default {
         this.registertop = 0;
         this.registeropacity = 1;
         this.btntop = 520;
-        this.tiptext = "已有账号？去登陆";
+        
       } else {
         this.flag = true;
         this.btnflag = false
@@ -144,12 +146,12 @@ export default {
         this.loginopacity = 1;
         this.btntop = 460;
         this.tiptext = "没有账号？去注册";
-        (this.inner1top = 0),
-          (this.inner1opacity = 1),
-          (this.inner1 = "visible"),
-          (this.inner2top = 50),
-          (this.inner2opacity = 0),
-          (this.inner2 = "hidden");
+        this.inner1top = 0
+          this.inner1opacity = 1
+          this.inner1 = "visible"
+          this.inner2top = 50
+          this.inner2opacity = 0
+          this.inner2 = "hidden"
       }
     },
     btnclick() {

@@ -2,8 +2,11 @@ const multer = require('multer')
 
 let storage = multer.diskStorage({
     destination:(req,file,cb)=>{
-        if(req.url == '/register'){
-            cb(null,'/assets/imgs/portrait')
+        if(req.url == '/submitportrait'){
+            cb(null,'./assets/imgs/portrait')
+        }
+        else{
+          cb(new Error('路径错误'))
         }
     },
     filename:function(req,file,cb) {
