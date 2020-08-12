@@ -1,4 +1,5 @@
 const sequelize = require('../sequelize')
+const {DataTypes} = require('sequelize')
 
 const users = sequelize.define(
     'users',
@@ -19,8 +20,7 @@ const users = sequelize.define(
             type:DataTypes.STRING
         },
         registertime:{
-            type:DataTypes.DATE,
-            allowNull:false
+            type:DataTypes.DATE
         },
         sex:{
             type:DataTypes.INTEGER,

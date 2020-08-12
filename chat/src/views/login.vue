@@ -115,7 +115,8 @@ export default {
       registersex:'',
       registerid:'',
       registername:'',
-      registerpsw:''
+      registerpsw:'',
+      portrait:''
     };
   },
   methods: {
@@ -174,7 +175,8 @@ export default {
               registersex:this.registersex,
               registerid:this.registerid,
               registername:this.registername,
-              registerpsw:this.registerpsw
+              registerpsw:this.registerpsw,
+              portrait:this.portrait
           }).then(res=>{
             console.log(res);
           })
@@ -182,14 +184,15 @@ export default {
       }
     },
     handleAvatarSuccess(res, file) {
+      this.portrait = res.portrait
         this.imageUrl = URL.createObjectURL(file.raw);
       },
       beforeAvatarUpload(file) {
-        const isJPG = file.type === 'image/jpeg';
+        const isJPG = file.type.indexOf('image') === 0;
         const isLt2M = file.size / 1024 / 1024 < 2;
 
         if (!isJPG) {
-          this.$message.error('上传头像图片只能是 JPG 格式!');
+          this.$message.error('请上传图片');
         }
         if (!isLt2M) {
           this.$message.error('上传头像图片大小不能超过 2MB!');
