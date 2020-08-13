@@ -1,8 +1,8 @@
 <template>
     <div id="indexbox">
-        <div class="row rowstyle">
-  <div class="col-sm-3"></div>
-  <div class="col-sm-6" >
+    <el-row :gutter="0" class="rowstyle">
+      <!-- <el-col :xs="0" :sm="5" :lg="5" :xl="5"><div> </div></el-col> -->
+      <el-col :xs="{span:24,offset:0}" :sm="{span:14,offset:5}" style="height:100%">
       <div class="chatbox">
           <div class="navigator">
               <img src="../assets/imgs/icon/search.png" alt="" class="myportrait" disabled>
@@ -22,19 +22,18 @@
               <div class="chatinput">
                   <div class="tools"></div>
   <textarea rows="5" id="textinput"></textarea>
-  <button type="button" class="btn btn-outline-primary btn-sm" id="submitbuttom">主要按钮</button>
+  <el-button type="primary" plain class="btn">主要按钮</el-button>
               </div>
           </div>
       </div>
-  </div>
-  <div class="col-sm-3"></div>
-</div>
+  </el-col>
+    </el-row>
     </div>
 </template>
 
 <script>
 export default {
-    
+
 }
 </script>
 
@@ -157,9 +156,11 @@ export default {
     box-sizing: border-box;
 }
 .chatinput{
+    position: relative;
     height: 175px;
     width: 100%;
     padding: 10px;
+    box-sizing: border-box;
 }
 .chatname{
     font-size: 15px;
@@ -182,14 +183,17 @@ export default {
     border: 0;
     background-color: transparent;
     outline: none;
-}
-#textinput:focus{
-
+    font-size: 16px;
 }
 #submitbuttom{
     top: 3px;
     float: right;
     margin-top: 4px;
     margin-right: 18px;
+}
+.btn{
+    position: absolute;
+    right: 10px;
+    bottom: -5px;
 }
 </style>

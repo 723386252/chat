@@ -8,7 +8,7 @@
           <div class="inputarea">
             <div
               class="loginarea"
-              :style="{visibility:loginshow,top:logintop + 'px',opacity:loginopacity}"
+              :style="{visibility:loginshow,top:logintop + 'px',opacity:loginopacity,zIndex:loginz}"
             >
               <div class="title">login</div>
               <input type="text" class="input" name="loginid" style="top:250px" placeholder="请输入账号" v-model="loginid"/>
@@ -23,7 +23,7 @@
             </div>
             <div
               class="registerarea"
-              :style="{visibility:registershow,top:registertop + 'px',opacity:registeropacity}"
+              :style="{visibility:registershow,top:registertop + 'px',opacity:registeropacity,zIndex:registerz}"
             >
               <div class="title" style="top:50px">register</div>
               <div
@@ -33,7 +33,7 @@
                 <input
                   type="text"
                   class="input"
-                  name="loginid"
+                  name="registerid"
                   style="top:200px"
                   placeholder="请输入账号"
                   v-model='registerid'
@@ -41,7 +41,7 @@
                 <input
                   type="text"
                   class="input"
-                  name="username"
+                  name="registername"
                   style="top:300px"
                   placeholder="请输入昵称"
                   v-model='registername'
@@ -49,7 +49,7 @@
                 <input
                   type="password"
                   class="input"
-                  name="password"
+                  name="registerpsw"
                   style="top:400px"
                   placeholder="请输入密码"
                   v-model='registerpsw'
@@ -89,7 +89,7 @@
 </template>
 
 <script>
-import {submitregister} from '../network/api/login'
+import {submitregister,submitlogin} from '../network/api/login'
 export default {
   data() {
     return {
@@ -116,14 +116,15 @@ export default {
       registerid:'',
       registername:'',
       registerpsw:'',
-      portrait:''
+      portrait:'',
+      loginz:5,
+      registerz:0
     };
   },
   methods: {
-    changemode() {
-      if (this.flag) {
+    goregister(){
+        this.tiptext = '已有账号？去登陆'
         this.flag = false;
-        this.tiptext = "已有账号？去登陆"
         this.logintop = 50;
         this.loginopacity = 0
           setTimeout(() => {
@@ -133,8 +134,12 @@ export default {
         this.registertop = 0;
         this.registeropacity = 1;
         this.btntop = 520;
-        
-      } else {
+        this.loginid=''
+         this.loginpsw=''
+         this.loginz = 0
+         this.registerz = 5
+    },
+    gologin(){
         this.flag = true;
         this.btnflag = false
         this.registertop = 50;
@@ -153,11 +158,33 @@ export default {
           this.inner2top = 50
           this.inner2opacity = 0
           this.inner2 = "hidden"
+          this.registersex=''
+      this.registerid=''
+      this.registername=''
+      this.registerpsw=''
+      this.portrait=''
+      this.imageUrl = ''
+      this.registerz = 0
+      this.loginz = 5
+    },
+    changemode() {
+      if (this.flag) {
+        this.goregister()
+        
+      } else {
+        this.gologin()
       }
     },
     btnclick() {
       if (this.flag) {
-        console.log("666");
+        submitlogin({
+          userid:this.loginid,
+          password:this.loginpsw
+        }).then(res=>{
+          console.log(res);
+          console.log(document.cookie);
+          
+        })
       } else {
         if (!this.btnflag) {
           this.btnflag = true
@@ -172,13 +199,18 @@ export default {
         }
         else{
           submitregister({
-              registersex:this.registersex,
-              registerid:this.registerid,
-              registername:this.registername,
-              registerpsw:this.registerpsw,
+              sex:this.registersex,
+              userid:this.registerid,
+              username:this.registername,
+              password:this.registerpsw,
               portrait:this.portrait
           }).then(res=>{
-            console.log(res);
+            if(res.success == 0){
+              this.goregister()
+            }
+            else{
+              this.gologin()
+            }
           })
         }
       }
@@ -260,6 +292,7 @@ export default {
   margin: 0 auto;
   cursor: pointer;
   transition: all 1s;
+  z-index: 10;
 }
 .submitlogin:hover {
   background-image: url("../assets/imgs/icon/login_button_focus.png");
@@ -297,6 +330,7 @@ export default {
   line-height: 15px;
   top: 630px;
   color: rgba(100, 100, 100, 0.7);
+  z-index: 10;
 }
 .tiptext:hover {
   color: rgba(70, 70, 70, 0.8);

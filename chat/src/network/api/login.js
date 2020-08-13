@@ -7,3 +7,10 @@ export function submitregister(data){
         data
     })
 }
+export function submitlogin(data) {
+    return request({
+        url:'/login',
+        method:'post',
+        data
+    })
+}
