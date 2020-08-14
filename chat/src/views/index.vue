@@ -32,8 +32,15 @@
 </template>
 
 <script>
+import {test} from '../network/api/chat'
 export default {
-
+created(){
+    test().then(res=>{
+        console.log(res);
+    }).catch(err=>{
+        console.log(err);
+    })
+}
 }
 </script>
 

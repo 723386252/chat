@@ -1,9 +1,9 @@
 import axios from 'axios'
-import Vue from 'vue'
+// import Vue from 'vue'
 
 
 axios.defaults.withCredentials=true //让ajax携带cookie
-Vue.prototype.$http = axios     // 这样设置就可以在组件内用 this.$http 使用axios了
+// Vue.prototype.$http = axios     // 这样设置就可以在组件内用 this.$http 使用axios了
 
 export default function request(config){
 const instance = axios.create({

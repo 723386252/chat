@@ -90,6 +90,7 @@
 
 <script>
 import {submitregister,submitlogin} from '../network/api/login'
+import {setToken} from '../utils/token'
 export default {
   data() {
     return {
@@ -182,7 +183,7 @@ export default {
           password:this.loginpsw
         }).then(res=>{
           console.log(res);
-          console.log(document.cookie);
+          setToken(res.data.token)
           
         })
       } else {
@@ -207,9 +208,11 @@ export default {
           }).then(res=>{
             if(res.success == 0){
               this.goregister()
+              alert('注册失败')
             }
             else{
               this.gologin()
+              alert('注册成功')
             }
           })
         }

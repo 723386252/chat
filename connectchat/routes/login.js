@@ -3,12 +3,18 @@ var router = express.Router();
 let upload = require('../utils/multer')
 let loginapi = require('../api/login')
 const md5 = require('md5')
+const Token = require('../utils/token')
+
 
 function uploadcheck(req,res,next) {
     upload.single('portrait')(req,res,err=>{
       next()
     })
 }
+router.get('/', function(req, res, next) {
+  // console.log(req.user);
+  res.send({data:req.user})
+});
 
 router.post('/submitportrait',uploadcheck, (req, res)=> {
   let portrait = req.file.destination.split('.')[1] + req.file.filename
@@ -42,17 +48,18 @@ router.post('/login',(req,res)=>{
   loginapi.submitlogin(userid,md5(password)).then(result=>{
     // console.log(result);
     if(result !== null){
-      req.session.user = {
-        username:result.dataValues.username,
-        userid:result.dataValues.userid
-      }
-      console.log(req.session);
+      let token = Token.gettoken({
+        userid:result.dataValues.userid,
+        username:result.dataValues.username
+      })
+      console.log(token);
       res.send({
         success:1,
         error_code:0,
         data:{
           username:result.dataValues.username,
-          portrait:result.dataValues.portrait
+          portrait:result.dataValues.portrait,
+          token
         }
       })
     }
