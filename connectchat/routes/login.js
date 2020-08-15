@@ -25,7 +25,7 @@ router.post('/register', (req, res)=> {
   let {userid,username,password,portrait,sex}=req.body
   password = md5(password)
   if(portrait == ''){
-    portrait = '/imgs/icon/default_portrait.jpg'
+    portrait = '/public/imgs/icon/default_portrait.jpg'
   }
   loginapi.submitregister(userid,username,password,portrait,sex).then(result=>{
     res.send({

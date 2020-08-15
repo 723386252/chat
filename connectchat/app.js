@@ -9,11 +9,7 @@ var chatrouter = require('./routes/chat');
 const expressJwt = require('express-jwt')
 
 var app = express();
-app.use(express.static(path.join(__dirname, 'public')));
-app.use((req,res,next)=>{
-  console.log(req.url);
-  next()
-})
+app.use('/public',express.static(path.join(__dirname, 'public')));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 app.use(expressJwt({

@@ -5,12 +5,12 @@
       <el-col :xs="{span:24,offset:0}" :sm="{span:14,offset:5}" style="height:100%">
       <div class="chatbox">
           <div class="navigator">
-              <img :src="portrait" alt="" class="myportrait" disabled>
-                  <input type="text" class="search">
+              <img :src="myportrait" alt="" class="myportrait" disabled>
+                  <input type="text" class="search" @blur="clearinput" v-model="inputtext">
           </div>
           <div class="friendlist">
               <div class="listitem">
-                  <img :src='portrait' alt="" class="portrait">
+                  <img :src='myportrait' alt="" class="portrait">
                   <span class="listusername">用户名</span>
               </div>
           </div>
@@ -22,7 +22,7 @@
               <div class="chatinput">
                   <div class="tools"></div>
   <textarea rows="5" id="textinput"></textarea>
-  <el-button type="primary" plain class="btn">主要按钮</el-button>
+  <el-button type="primary" plain class="btn">发送</el-button>
               </div>
           </div>
       </div>
@@ -35,6 +35,12 @@
 import {getuserinfo} from '../network/api/chat'
 
 export default {
+data(){
+    return{
+        myportrait:'',
+        inputtext:''
+    }
+},
     sockets: {
     // 连接后台socket
     connect() {
@@ -72,19 +78,18 @@ export default {
         userid: this.userid,
         msg: this.msg
       });
-    }},
+    },
+    clearinput(){
+        this.inputtext = ''
+    }
+    },
 created(){
     getuserinfo().then(res=>{
         console.log(res);
-        this.portrait = res.data.portrait
+        this.myportrait = res.data.portrait
     }).catch(err=>{
         console.log(err);
     })
-},
-data(){
-    return{
-        portrait:''
-    }
 }
 }
 </script>
