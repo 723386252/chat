@@ -5,12 +5,12 @@
       <el-col :xs="{span:24,offset:0}" :sm="{span:14,offset:5}" style="height:100%">
       <div class="chatbox">
           <div class="navigator">
-              <img src="../assets/imgs/icon/search.png" alt="" class="myportrait" disabled>
+              <img :src="portrait" alt="" class="myportrait" disabled>
                   <input type="text" class="search">
           </div>
           <div class="friendlist">
               <div class="listitem">
-                  <img src="../assets/imgs/icon/search.png" alt="" class="portrait">
+                  <img :src='portrait' alt="" class="portrait">
                   <span class="listusername">用户名</span>
               </div>
           </div>
@@ -32,14 +32,59 @@
 </template>
 
 <script>
-import {test} from '../network/api/chat'
+import {getuserinfo} from '../network/api/chat'
+
 export default {
+    sockets: {
+    // 连接后台socket
+    connect() {
+      console.log('socket connected');
+    },
+    // 用户后台调用，添加数据
+    sendMessage(data) {
+      console.log(data);
+    },
+    // 用户后台调用，打印数据
+    receivemsg(data) {
+      console.log('receivemsg');
+      console.log(data);
+    }
+  },
+  methods: {
+    // 发送消息给后台
+    send() {
+      // 使用emit调用后台的socket中的message方法
+      this.$socket.emit("message", {
+        userid: 100,
+        name: this.name,
+        msg: this.msg
+      });
+    },
+    // 建立用户连接
+    join() {
+      this.$socket.emit("join", {
+        userid: this.userid
+      });
+    },
+    // 发送消息给后台 用于私发消息
+    sendmsg() {
+      this.$socket.emit("sendmsg", {
+        userid: this.userid,
+        msg: this.msg
+      });
+    }},
 created(){
-    test().then(res=>{
+    getuserinfo().then(res=>{
         console.log(res);
+        this.portrait = res.data.portrait
     }).catch(err=>{
         console.log(err);
     })
+},
+data(){
+    return{
+        portrait:''
+    }
 }
 }
 </script>
@@ -47,7 +92,7 @@ created(){
 <style scoped>
 #indexbox{
     height: 100%;
-            background-color: #f6f6f6;
+    background-color: #f6f6f6;
 
 }
 .rowstyle{

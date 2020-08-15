@@ -3,7 +3,7 @@ const multer = require('multer')
 let storage = multer.diskStorage({
     destination:(req,file,cb)=>{
         if(req.url == '/submitportrait'){
-            cb(null,'./assets/imgs/portrait')
+            cb(null,'./public/imgs/portrait')
         }
         else{
           cb(new Error('路径错误'))
@@ -11,6 +11,7 @@ let storage = multer.diskStorage({
     },
     filename:function(req,file,cb) {
         let time = new Date().getTime()
+        console.log(file.originalname);
       filename = time + file.originalname
       cb(null,filename)
 

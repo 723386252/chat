@@ -9,26 +9,30 @@ var chatrouter = require('./routes/chat');
 const expressJwt = require('express-jwt')
 
 var app = express();
-
+app.use(express.static(path.join(__dirname, 'public')));
+app.use((req,res,next)=>{
+  console.log(req.url);
+  next()
+})
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 app.use(expressJwt({
   secret: 'sheweijie',  // 签名的密钥 或 PublicKey
   algorithms:['HS256']  //默认解析格式
 }).unless({
-  path: ['/login', '/register']  // 指定路径不经过 Token 解析
+  path: ['/login', '/register','/submitportrait',/\/socket.io/]  // 指定路径不经过 Token 解析
 }))
 
-app.use(express.static('/assets'))
 app.use(bodyParser.urlencoded({extended:false}))
 app.use(bodyParser.json())
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+
+
 app.use(function(req, res, next) {
-  console.log(req);
+  // console.log(req.get('origin'));
   res.header('Access-Control-Allow-Origin', req.get("origin")); //先允许跨域请求才能进来
   res.header("Access-Control-Allow-Credentials", true);//处理cookie信息，如果有，并且不对每次请求都新开一个session
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD");//允许的请求方法

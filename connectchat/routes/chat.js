@@ -2,9 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 /* GET users listing. */
-router.get('/chat', function(req, res, next) {
-  console.log('6666');
-  console.log(req.user);
+router.get('/getuserinfo', function(req, res, next) {
   res.send({data:req.user})
 });
 

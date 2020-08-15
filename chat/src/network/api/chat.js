@@ -1,9 +1,9 @@
 import request from '../request'
 import {getToken} from '../../utils/token'
 
-export function test(){
+export function getuserinfo(){
     return request({
-        url:'/',
+        url:'/chat/getuserinfo',
         method:'get',
         // responseType: 'blob',   
         headers: { 'Authorization': 'Bearer ' + getToken() }

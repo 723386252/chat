@@ -184,6 +184,7 @@ export default {
         }).then(res=>{
           console.log(res);
           setToken(res.data.token)
+          this.$router.replace('/index')
           
         })
       } else {
@@ -385,5 +386,10 @@ export default {
     width: 178px;
     height: 178px;
     display: block;
+  }
+  @media screen and (max-width:800px){
+    .title{
+      font-size:50px
+    }
   }
 </style>

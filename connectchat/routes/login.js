@@ -11,14 +11,12 @@ function uploadcheck(req,res,next) {
       next()
     })
 }
-router.get('/', function(req, res, next) {
-  // console.log(req.user);
-  res.send({data:req.user})
-});
+
 
 router.post('/submitportrait',uploadcheck, (req, res)=> {
-  let portrait = req.file.destination.split('.')[1] + req.file.filename
-  console.log(req.session);
+  // console.log(req.file);
+  let portrait = `${req.file.destination.split('.')[1]}/${req.file.filename}`
+  // console.log(req.session);
   res.send({
     portrait
   })
@@ -27,7 +25,7 @@ router.post('/register', (req, res)=> {
   let {userid,username,password,portrait,sex}=req.body
   password = md5(password)
   if(portrait == ''){
-    portrait = '/assets/imgs/icon/default_portrait.jpg'
+    portrait = '/imgs/icon/default_portrait.jpg'
   }
   loginapi.submitregister(userid,username,password,portrait,sex).then(result=>{
     res.send({
@@ -50,7 +48,8 @@ router.post('/login',(req,res)=>{
     if(result !== null){
       let token = Token.gettoken({
         userid:result.dataValues.userid,
-        username:result.dataValues.username
+        username:result.dataValues.username,
+        portrait:'http://127.0.0.1:3000'+result.dataValues.portrait
       })
       console.log(token);
       res.send({
