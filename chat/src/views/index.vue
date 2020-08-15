@@ -4,9 +4,10 @@
       <!-- <el-col :xs="0" :sm="5" :lg="5" :xl="5"><div> </div></el-col> -->
       <el-col :xs="{span:24,offset:0}" :sm="{span:14,offset:5}" style="height:100%">
       <div class="chatbox">
+          <infobox ref="infobox"></infobox>
           <div class="navigator">
               <img :src="myportrait" alt="" class="myportrait" disabled>
-                  <input type="text" class="search" @blur="clearinput" v-model="inputtext">
+                  <input type="text" class="search" @blur="clearinput" v-model="inputtext" @keydown.enter='search'>
           </div>
           <div class="friendlist">
               <div class="listitem">
@@ -33,13 +34,16 @@
 
 <script>
 import {getuserinfo} from '../network/api/chat'
-
+import infobox from '../components/infobox'
 export default {
 data(){
     return{
         myportrait:'',
         inputtext:''
     }
+},
+components:{
+    infobox
 },
     sockets: {
     // 连接后台socket
@@ -81,6 +85,17 @@ data(){
     },
     clearinput(){
         this.inputtext = ''
+    },
+    search(){
+        this.$refs.infobox.showbox({
+            type:'sendrequest',
+            user:{
+                portrait:'',
+                username:'我是你爹',
+                userid:''
+            }
+        })
+        console.log(this.$refs.infobox);
     }
     },
 created(){
