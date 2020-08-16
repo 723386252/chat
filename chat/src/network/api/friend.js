@@ -18,3 +18,12 @@ export function getrequest(params){
         headers: { 'Authorization': 'Bearer ' + getToken() }
     })
 }
+
+export function getuserinfo(params){
+    return request({
+        url:'/friend/getuserinfo',
+        method:'get',
+        params,
+        headers: { 'Authorization': 'Bearer ' + getToken() }
+    })
+}

@@ -1,6 +1,7 @@
 const groups = require('../utils/mysql/tables/groups')
 const sequelize = require('../utils/mysql/sequelize')
 const request = require('../utils/mysql/tables/request')
+const users = require('../utils/mysql/tables/users')
 
 const api = {
     addgroup(userid,groupname){
@@ -15,6 +16,14 @@ const api = {
             where:{
                 'to':userid,
                 'flag':0
+            }
+        })
+    },
+    getuserinfo(userid){
+        return users.findAll({
+            attributes:['userid','username','portrait','sex'],
+            where:{
+                'userid':userid
             }
         })
     }

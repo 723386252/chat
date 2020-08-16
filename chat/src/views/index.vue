@@ -4,7 +4,7 @@
       <!-- <el-col :xs="0" :sm="5" :lg="5" :xl="5"><div> </div></el-col> -->
       <el-col :xs="{span:24,offset:0}" :sm="{span:14,offset:5}" style="height:100%">
       <div class="chatbox">
-          <infobox ref="infobox"></infobox>
+          <infobox ref="infobox" class="infobox"></infobox>
           <div class="navigator">
               <img :src="user.portrait" alt="" class="myportrait" disabled>
               <div class="newrequest" :style="{'display':requestlist.length == 0 ? 'none':'block'}" @click="showrequest">{{requestlist.length}}</div>
@@ -44,9 +44,9 @@
 </template>
 
 <script>
-import {getuserinfo} from '../network/api/chat'
+import {getmyinfo} from '../network/api/chat'
 import infobox from '../components/infobox'
-import {addgroup,getrequest} from '../network/api/friend'
+import {addgroup,getrequest,getuserinfo} from '../network/api/friend'
 export default {
 data(){
     return{
@@ -62,7 +62,8 @@ data(){
             username:'',
             portrait:''
         },
-        requestlist:[]
+        requestlist:[],
+        temprequest:''
     }
 },
 components:{
@@ -161,14 +162,31 @@ components:{
           })
       },
       showrequest(){
-          
-          this.$refs.infobox.showbox({
-              type:'getrequset'
+          this.temprequest = this.requestlist.pop()
+          getuserinfo({
+              userid:this.temprequest
+          }).then(res=>{
+              console.log(res);
+              if(res.data[0].sex == 1){
+                  res.data[0].sex = '男'
+              }
+              else{
+                  res.data[0].sex = '女'
+              }
+              
+              this.$refs.infobox.showbox({
+              type:'getrequest',
+              user:res.data[0]
           })
+          }).catch(err=>{
+              err
+              this.requestlist.push(this.temprequest)
+          })
+          
       }
     },
 created(){
-    getuserinfo().then(res=>{
+    getmyinfo().then(res=>{
         this.user.userid = res.data.userid
         this.user.username = res.data.username
         this.user.portrait = res.data.portrait
@@ -460,5 +478,10 @@ transition: all 200ms;
     float: left;
     box-sizing: border-box;
 }
+}
+@media screen and (max-width:768px){
+    .infobox{
+        width: 100%;
+    }
 }
 </style>

@@ -3,8 +3,9 @@
         <div class="box">
             <div class="title">{{info.title}}</div>
             <div class="userinfo">
-                <img src="../assets/imgs/icon/search.png" class="portrait">
+                <img :src="userinfo.portrait" class="portrait">
                 <div class="username">{{userinfo.username}}</div>
+                <div class="usersex">{{userinfo.sex}}</div>
             </div>
             <div class="buttonbox">
             <div class="button" @click="btn1click">{{info.button1}}</div>
@@ -28,6 +29,8 @@ export default {
     },
     methods:{
         showbox(data){
+            console.log(data);
+            console.log(data.type == 'getrequest');
             this.isshow =true
             if(data.type == 'sendrequest'){
                 this.info = {
@@ -65,14 +68,16 @@ export default {
 .box{
     
     height: 25%;
-    width: 55%;
-    margin: 0 auto;
+    width: 40%;
+    min-width: 300px;
     border-radius: 8px;
         box-sizing: border-box;
     box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.1);
     background-color: white;
-    margin-top: 37.5%;
     padding: 10px;
+    position: absolute;
+    left: 30%;
+    top: 37.5%;
 }
 .title{
     text-align: center;
@@ -119,5 +124,12 @@ export default {
     background-color: rgba(100, 100, 100,0.3);
     border:  1px solid white;
     color: white;
+}
+.usersex{
+    font-size: 14px;
+    margin-left: 10%;
+    float: left;
+    margin-top: 4px;
+    color: rgba(100, 100, 100,1);
 }
 </style>
