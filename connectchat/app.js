@@ -6,6 +6,7 @@ var logger = require('morgan');
 var bodyParser = require('body-parser')
 var loginrouter = require('./routes/login');
 var chatrouter = require('./routes/chat');
+var friendrouter = require('./routes/friend')
 const expressJwt = require('express-jwt')
 
 var app = express();
@@ -37,6 +38,7 @@ app.use(function(req, res, next) {
 });
 app.use('/', loginrouter);
 app.use('/chat', chatrouter);
+app.use('/friend',friendrouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

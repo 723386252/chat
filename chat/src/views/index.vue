@@ -6,14 +6,25 @@
       <div class="chatbox">
           <infobox ref="infobox"></infobox>
           <div class="navigator">
-              <img :src="myportrait" alt="" class="myportrait" disabled>
+              <img :src="user.portrait" alt="" class="myportrait" disabled>
+              <div class="newrequest" :style="{'display':requestlist.length == 0 ? 'none':'block'}" @click="showrequest">{{requestlist.length}}</div>
                   <input type="text" class="search" @blur="clearinput" v-model="inputtext" @keydown.enter='search'>
           </div>
           <div class="friendlist">
-              <div class="listitem">
-                  <img :src='myportrait' alt="" class="portrait">
+              <div class="addgroup">
+                  <div class="addgroupbutton" style="position:absolute" :style="{'display':showaddicon?'block':'none'}">
+                  <img src="../assets/imgs/icon/add_default.png" class="addicon" @click="showgroupiput" >
+                  <span class="addgrouptitle">添加分组</span></div>
+                  <input type="text" v-model="groupname" class="groupinput" @blur="groupunfocus" @keyup.enter="group" :style="{'width':groupwidth + '%','visibility':showaddinput?'visible':'hidden','zIndex':Zaddinput}">
+              </div>
+              <el-collapse v-model="activeNames" @change="handleChange">
+  <el-collapse-item title="一致性 Consistency" name="1">
+    <div class="listitem">
+                  <img :src='user.portrait' alt="" class="portrait">
                   <span class="listusername">用户名</span>
               </div>
+  </el-collapse-item>
+</el-collapse>
           </div>
           <div class="chat">
               <div class="chathead">
@@ -35,11 +46,23 @@
 <script>
 import {getuserinfo} from '../network/api/chat'
 import infobox from '../components/infobox'
+import {addgroup,getrequest} from '../network/api/friend'
 export default {
 data(){
     return{
-        myportrait:'',
-        inputtext:''
+        inputtext:'',
+        showaddicon:true,
+        groupwidth:0,
+        Zaddinput:10,
+        showaddinput:false,
+        activeNames: ['1'],
+        groupname:'',
+        user:{
+            userid:'',
+            username:'',
+            portrait:''
+        },
+        requestlist:[]
     }
 },
 components:{
@@ -87,6 +110,7 @@ components:{
         this.inputtext = ''
     },
     search(){
+
         this.$refs.infobox.showbox({
             type:'sendrequest',
             user:{
@@ -95,16 +119,73 @@ components:{
                 userid:''
             }
         })
-        console.log(this.$refs.infobox);
-    }
+    },
+    showgroupiput(){
+        this.showaddicon = false
+        this.Zaddinput = 100
+        this.showaddinput = true
+        this.groupwidth = 100
+        setTimeout(() => {
+            document.querySelector('.groupinput').focus()
+        }, 100);
+        
+    },
+    groupunfocus(){
+        this.groupwidth = 0
+                    
+        // setTimeout(() => {
+            this.showaddinput = false
+            this.Zaddicon = -1
+
+        // }, 100);
+
+        setTimeout(() => {
+            this.showaddicon = true
+        },200)
+        
+    },
+     handleChange(val) {
+        console.log(val);
+      },
+      group(){  
+          addgroup({
+              userid:this.user.userid,
+              groupname:this.groupname
+          }).then(res=>{
+              if(res.success == 1){
+                  console.log('添加成功');
+              }
+              else{
+                      console.log('添加失败');
+              }
+          })
+      },
+      showrequest(){
+          
+          this.$refs.infobox.showbox({
+              type:'getrequset'
+          })
+      }
     },
 created(){
     getuserinfo().then(res=>{
-        console.log(res);
-        this.myportrait = res.data.portrait
-    }).catch(err=>{
-        console.log(err);
+        this.user.userid = res.data.userid
+        this.user.username = res.data.username
+        this.user.portrait = res.data.portrait
+
+        getrequest({userid:this.user.userid}).then(res=>{
+        if(res.success == 1){
+            console.log(res);
+            res.data.forEach(item=>{
+                this.requestlist.push(item.from)
+            })
+        }
     })
+    }).catch(err=>{
+        err
+        console.log('获取用户信息失败');
+    })
+    
 }
 }
 </script>
@@ -130,6 +211,7 @@ created(){
     background-color: white;
 }
 .navigator{
+    position: relative;
     height: 57px;
     width: 100%;
     border-bottom: 1px solid rgba(100, 100, 100, 0.15);
@@ -144,7 +226,7 @@ created(){
 }
 .chat{
     height: 644px;
-    width: calc(100% - 32%);
+    width: 68%;
 
     float: left;
     box-sizing: border-box;
@@ -157,7 +239,7 @@ created(){
     border-radius: 18px;
     float: left;
     transition: 300ms all;
-    margin-left: 10%;
+    margin: 0 auto;
     margin-top: 9.5px;
     background-image: url('../assets/imgs/icon/search.png');
     background-size: 20px 20px;
@@ -168,11 +250,12 @@ created(){
     background-color:rgba(200, 200, 200, 0.2);
     font-size: 16px;
     box-sizing: border-box;
-    
+    margin-left: 20%;
     }
 .search:hover{
     width: 280px;
     padding: 10px 10px 10px 40px;
+    background-position: 16px 8px;
 }
 .search:focus{
     width: 280px;
@@ -191,9 +274,10 @@ created(){
 }
 .listitem{
     width: 100%;
-    height: 60px;
+    height: 50px;
     padding: 10px;
     box-sizing: border-box;
+    border-top:  1px solid rgba(100, 100, 100, 0.15);
     border-bottom: 1px solid rgba(100, 100, 100, 0.15);
 }
 .listitem:hover{
@@ -267,5 +351,114 @@ created(){
     position: absolute;
     right: 10px;
     bottom: -5px;
+}
+.addgroup{
+    width: 100%;
+    height: 50px;
+    padding: 10px;
+    box-sizing: border-box;
+    position: relative;
+    border-bottom:  1px solid rgba(100, 100, 100, 0.15);
+}
+.addicon{
+    height:100%;
+    display: block;
+    cursor: pointer;
+    float: left;
+
+}
+.groupinput{
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    outline: none;
+    background-color: rgba(100, 100, 100, 0.15);
+    border: 0;
+    border-radius: 5px;
+    transition: all 200ms;
+    float: left;
+
+}
+.addgrouptitle{
+    color: rgba(100, 100, 100, 0.8);
+    font-size: 16px;
+    line-height:16px;
+    display: inline-block;
+    margin-top: 6px;
+    margin-left: 10%;
+}
+.addgroupbutton{
+    height: calc(100% - 20px);
+    width: calc(100% - 20px);
+    position: absolute;
+}
+
+
+.grouplist{
+    width: 100%;
+}
+.grouptitle{
+width: 100%;
+height: 20px;
+padding: 3px 10px;
+font-size: 14px;
+background-color: rgba(100, 100, 100, 0.2);
+box-sizing: border-box ;
+line-height: 14px;
+transition: all 200ms;
+}
+.grouptitle:hover{
+    background-color: rgba(100, 100, 100, 0.3);
+}
+.newrequest{
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    background-color: red;
+    float: left;
+    margin-top: 18.5px;
+    margin-left: 11%;
+    position: absolute;
+        cursor: pointer;
+    user-select: none;
+    color: white;
+    text-align: center;
+    line-height: 20px;
+    font-size: 14px;
+}
+@media screen and (max-width: 860px){
+    .newrequest{
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    background-color: red;
+    float: left;
+    margin-top: 18.5px;
+    margin-left: 54px;
+    position: absolute;
+    cursor: pointer;
+    user-select: none;
+    color: white;
+    text-align: center;
+    line-height: 20px;
+    font-size: 14px;
+}
+}
+@media screen and (max-width:500px){
+    .friendlist{
+            width: 140px;
+    height: 644px;
+    float: left;
+    box-sizing: border-box;
+    box-shadow:  4px 0px 15px -15px #5E5E5E;
+    }
+    .chat{
+    height: 644px;
+    width: calc(100% - 140px);
+
+    float: left;
+    box-sizing: border-box;
+}
 }
 </style>

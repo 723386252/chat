@@ -3,7 +3,7 @@
         <div class="box">
             <div class="title">{{info.title}}</div>
             <div class="userinfo">
-                <img :src='userinfo.portrait' class="portrait">
+                <img src="../assets/imgs/icon/search.png" class="portrait">
                 <div class="username">{{userinfo.username}}</div>
             </div>
             <div class="buttonbox">
@@ -71,7 +71,7 @@ export default {
         box-sizing: border-box;
     box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.1);
     background-color: white;
-    margin-top: calc(50% - 12.5%);
+    margin-top: 37.5%;
     padding: 10px;
 }
 .title{
@@ -90,7 +90,7 @@ export default {
     border-bottom: 1px solid rgba(100, 100, 100,0.15);
 }
 .portrait{
-    width: 60px;
+    height: 100%;
     display: block;
     float: left;
 }
