@@ -4,7 +4,7 @@
       <!-- <el-col :xs="0" :sm="5" :lg="5" :xl="5"><div> </div></el-col> -->
       <el-col :xs="{span:24,offset:0}" :sm="{span:14,offset:5}" style="height:100%">
       <div class="chatbox">
-          <infobox ref="infobox" class="infobox"></infobox>
+          <infobox ref="infobox" class="infobox" @btn1click='btn1click'></infobox>
           <div class="navigator">
               <img :src="user.portrait" alt="" class="myportrait" disabled>
               <div class="newrequest" :style="{'display':requestlist.length == 0 ? 'none':'block'}" @click="showrequest">{{requestlist.length}}</div>
@@ -183,6 +183,9 @@ components:{
               this.requestlist.push(this.temprequest)
           })
           
+      },
+      btn1click(userinfo){
+          userinfo
       }
     },
 created(){

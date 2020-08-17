@@ -49,9 +49,11 @@ export default {
             this.userinfo = data.user
         },
         btn1click(){
+            this.isshow = false
             this.$emit('btn1click',this.userinfo)
         },
         btn2click(){
+            this.isshow = false
             this.$emit('btn2click',this.userinfo)
         },
     }
