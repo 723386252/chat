@@ -1,5 +1,6 @@
 const sequelize = require('../sequelize')
 const {DataTypes} = require('sequelize')
+const users = require('../tables/users')
 
 const friends = sequelize.define(
     'friends',
@@ -19,10 +20,13 @@ const friends = sequelize.define(
             allowNull:true
         },
         groupid:{
-            type:DataTypes.STRING,
+            type:DataTypes.INTEGER,
             allowNull:true
         },
-        
+        flag:{
+            type:DataTypes.INTEGER,
+            allowNull:true
+        }
     },
     {
         timestamps: false,
@@ -30,4 +34,4 @@ const friends = sequelize.define(
     }
 )
 
-module.exports = groups
+module.exports = friends

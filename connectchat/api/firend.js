@@ -2,6 +2,7 @@ const groups = require('../utils/mysql/tables/groups')
 const sequelize = require('../utils/mysql/sequelize')
 const request = require('../utils/mysql/tables/request')
 const users = require('../utils/mysql/tables/users')
+const friends = require('../utils/mysql/tables/friends')
 
 const api = {
     addgroup(userid,groupname){
@@ -26,6 +27,27 @@ const api = {
                 'userid':userid
             }
         })
+    },
+    addfriend(userid,friendid,groupid){
+        
+},
+    initfriend(userid,friendid,groupid){
+        return friends.findOrCreate({
+            where:{
+                userid,
+                friendid,
+                groupid:groupid
+            }
+        })
+    },
+    getgroup(userid){
+        return groups.findAll({
+            attributes:['groupname','groupid'],
+            where:{
+                'userid':userid
+            }
+        })
     }
 }
+
 module.exports = api

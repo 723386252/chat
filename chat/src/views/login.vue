@@ -91,6 +91,7 @@
 <script>
 import {submitregister,submitlogin} from '../network/api/login'
 import {setToken} from '../utils/token'
+
 export default {
   data() {
     return {
@@ -176,31 +177,18 @@ export default {
         this.gologin()
       }
     },
-    btnclick() {
-      if (this.flag) {
-        submitlogin({
+    login(){
+submitlogin({
           userid:this.loginid,
           password:this.loginpsw
         }).then(res=>{
-          console.log(res);
           setToken(res.data.token)
           this.$router.replace('/index')
           
         })
-      } else {
-        if (!this.btnflag) {
-          this.btnflag = true
-          this.inner1top = 50;
-          this.inner1opacity = 0;
-          setTimeout(() => {
-            this.inner1 = "hidden";
-          }, 1000);
-          this.inner2 = "visible";
-          this.inner2top = 0;
-          this.inner2opacity = 1;
-        }
-        else{
-          submitregister({
+    },
+    register(){
+submitregister({
               sex:this.registersex,
               userid:this.registerid,
               username:this.registername,
@@ -216,6 +204,24 @@ export default {
               alert('注册成功')
             }
           })
+    },
+    btnclick() {
+      if (this.flag) {
+        this.login()
+      } else {
+        if (!this.btnflag) {
+          this.btnflag = true
+          this.inner1top = 50;
+          this.inner1opacity = 0;
+          setTimeout(() => {
+            this.inner1 = "hidden";
+          }, 1000);
+          this.inner2 = "visible";
+          this.inner2top = 0;
+          this.inner2opacity = 1;
+        }
+        else{
+          this.register()
         }
       }
     },
@@ -236,6 +242,13 @@ export default {
         return isJPG && isLt2M;
       }
   },
+  created(){
+document.onkeydown =  event=> {
+  if(event.keyCode == 13){
+    this.btnclick()
+  }
+  }
+  }
 };
 </script>
 

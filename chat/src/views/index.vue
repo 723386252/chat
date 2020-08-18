@@ -46,7 +46,7 @@
 <script>
 import {getmyinfo} from '../network/api/chat'
 import infobox from '../components/infobox'
-import {addgroup,getrequest,getuserinfo} from '../network/api/friend'
+import {addgroup,getrequest,getuserinfo,initfriend,getgroup} from '../network/api/friend'
 export default {
 data(){
     return{
@@ -63,7 +63,8 @@ data(){
             portrait:''
         },
         requestlist:[],
-        temprequest:''
+        temprequest:'',
+        usergroup:[]
     }
 },
 components:{
@@ -111,15 +112,34 @@ components:{
         this.inputtext = ''
     },
     search(){
-
-        this.$refs.infobox.showbox({
+        getuserinfo({userid:this.inputtext}).then(res=>{
+            if(res.success == 1){
+                if(typeof(res.data[0].sex) !== 'undefined'){
+                    if(res.data[0].sex == 1){
+                        res.data[0].sex = '男'
+                    }
+                    else{
+                        res.data[0].sex = '女'
+                    }
+                }
+                this.$refs.infobox.showbox({
+            type:'sendrequest',
+            user:res.data[0],
+            group:this.usergroup
+        })
+            }
+            else{
+                this.$refs.infobox.showbox({
             type:'sendrequest',
             user:{
                 portrait:'',
-                username:'我是你爹',
+                username:'未找到用户',
                 userid:''
             }
         })
+            }
+        })
+        
     },
     showgroupiput(){
         this.showaddicon = false
@@ -155,6 +175,7 @@ components:{
           }).then(res=>{
               if(res.success == 1){
                   console.log('添加成功');
+                  this.usergroup.push(this.groupname)
               }
               else{
                       console.log('添加失败');
@@ -166,7 +187,6 @@ components:{
           getuserinfo({
               userid:this.temprequest
           }).then(res=>{
-              console.log(res);
               if(res.data[0].sex == 1){
                   res.data[0].sex = '男'
               }
@@ -176,7 +196,8 @@ components:{
               
               this.$refs.infobox.showbox({
               type:'getrequest',
-              user:res.data[0]
+              user:res.data[0],
+              group:this.usergroup
           })
           }).catch(err=>{
               err
@@ -184,8 +205,27 @@ components:{
           })
           
       },
-      btn1click(userinfo){
-          userinfo
+      btn1click(data){
+          if(data.type == 'sendrequest'){
+              console.log(data);
+              initfriend({
+                  userid:this.user.userid,
+                  friendid:data.userinfo.userid,
+                  groupid:data.groupid
+              }).then(res=>{
+                  if(res.success == 0){
+                      if(res.error_code == 102){
+                          console.log('好友已存在');
+                      }
+                      else if(res.error_code == 101){
+                          console.log('数据库读取错误');
+                      }
+                  }
+              }).catch(err=>{
+                  err
+                  console.log('请求错误');
+              })
+          }
       }
     },
 created(){
@@ -201,7 +241,17 @@ created(){
                 this.requestlist.push(item.from)
             })
         }
+    }).catch(err=>{
+        err
+        console.log('获取请求信息失败');
     })
+        getgroup({userid:res.data.userid}).then(res=>{
+            this.usergroup = res.data
+            console.log(this.usergroup);
+        }).catch(err=>{
+            err
+            console.log('获取分组失败');
+        })
     }).catch(err=>{
         err
         console.log('获取用户信息失败');
@@ -275,15 +325,15 @@ created(){
     }
 .search:hover{
     width: 280px;
-    padding: 10px 10px 10px 40px;
+    padding: 10px 10px 10px 50px;
     background-position: 16px 8px;
 }
 .search:focus{
     width: 280px;
-    padding: 10px 10px 10px 40px;
+    padding: 10px 10px 10px 50px;
     background-color: white;
     border: 1px solid rgba(150, 150, 150, 0.4);
-
+    background-position: 16px 8px;
 }
 .myportrait{
     height: 34px;

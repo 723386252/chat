@@ -72,4 +72,53 @@ router.get('/getuserinfo',(req,res)=>{
         })
     })
 })
+
+router.get('/initfriend',(req,res)=>{
+    let {groupid,userid,friendid} = req.query
+    friendapi.initfriend(userid,friendid,groupid).then(result=>{
+        // console.log(result);
+        if(result[0].dataValues.flag == 0){
+            res.send({
+                success:1,
+                error_code:0
+            })
+        }
+        else{
+            res.send({
+                success:0,
+                error_code:102
+            })
+        }
+    }).catch(error=>{
+        console.log(error);
+        res.send({
+            success:0,
+            error_code:101
+        })
+    })
+})
+
+router.get('/getgroup',(req,res)=>{
+    let userid = req.query.userid
+    friendapi.getgroup(userid).then(result=>{
+        if(result.length != 0){
+            res.send({
+                success:1,
+                error_code:0,
+                data:result
+            })
+        }
+        else{
+            res.send({
+                success:0,
+                error_code:100
+            })
+        }
+    }).catch(error=>{
+        res.send({
+            success:0,
+            error_code:101
+        })
+    })
+})
 module.exports = router

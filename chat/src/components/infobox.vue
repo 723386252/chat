@@ -4,8 +4,20 @@
             <div class="title">{{info.title}}</div>
             <div class="userinfo">
                 <img :src="userinfo.portrait" class="portrait">
-                <div class="username">{{userinfo.username}}</div>
+                <div class="info_main">
+                    <div class="username">{{userinfo.username}}</div>
                 <div class="usersex">{{userinfo.sex}}</div>
+                <el-select v-model="selectgroup" placeholder="分组" class="group">
+    <el-option
+      v-for="item in group"
+      :key="item.groupid"
+      :label="item.groupname"
+      :value="item.groupid"
+      >
+    </el-option>
+  </el-select>
+                </div>
+                
             </div>
             <div class="buttonbox">
             <div class="button" @click="btn1click">{{info.button1}}</div>
@@ -24,13 +36,15 @@ export default {
             isshow:false,
             title:'',
             info:{},
-            userinfo:{}
+            userinfo:{},
+            type:'',
+            group:[],
+            selectgroup:''
         }
     },
     methods:{
         showbox(data){
-            console.log(data);
-            console.log(data.type == 'getrequest');
+            this.type = data.type
             this.isshow =true
             if(data.type == 'sendrequest'){
                 this.info = {
@@ -47,14 +61,25 @@ export default {
                 }
             }
             this.userinfo = data.user
+            this.group = data.group
         },
         btn1click(){
-            this.isshow = false
-            this.$emit('btn1click',this.userinfo)
+            if(this.selectgroup == ''){
+                alert('请选择分组')
+            }
+            else{
+                this.isshow = false
+                this.$emit('btn1click',{userinfo:this.userinfo,groupid:this.selectgroup,type:this.type})
+            setTimeout(() => {
+                this.selectgroup = ''
+            });
+            }
+
         },
         btn2click(){
             this.isshow = false
-            this.$emit('btn2click',this.userinfo)
+            this.selectgroup = ''
+            this.$emit('btn2click',{userinfo:this.userinfo,groupid:this.selectgroup,type:this.type})
         },
     }
 }
@@ -89,7 +114,7 @@ export default {
 }
 .userinfo{
     width: 100%;
-    height: 50%;
+    height: 55%;
     margin-top: 3%;
     padding: 10px;
     box-sizing: border-box;
@@ -129,9 +154,19 @@ export default {
 }
 .usersex{
     font-size: 14px;
-    margin-left: 10%;
+    margin-left: 20%;
     float: left;
     margin-top: 4px;
     color: rgba(100, 100, 100,1);
+}
+.info_main{
+    float: left;
+    margin-left: 10%;
+}
+.group{
+    width: 120px;
+    float: left;
+    display: block;
+    clear: both;
 }
 </style>

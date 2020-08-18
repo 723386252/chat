@@ -27,3 +27,21 @@ export function getuserinfo(params){
         headers: { 'Authorization': 'Bearer ' + getToken() }
     })
 }
+
+export function initfriend(params){
+    return request({
+        url:'/friend/initfriend',
+        method:'get',
+        params,
+        headers: { 'Authorization': 'Bearer ' + getToken() }
+    })
+}
+
+export function getgroup(params){
+    return request({
+        url:'/friend/getgroup',
+        method:'get',
+        params,
+        headers: { 'Authorization': 'Bearer ' + getToken() }
+    })
+}
