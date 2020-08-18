@@ -35,8 +35,13 @@ const api = {
         return friends.findOrCreate({
             where:{
                 userid,
+                friendid
+            },
+            defaults:{
+                userid,
                 friendid,
-                groupid:groupid
+                groupid,
+                flag:0
             }
         })
     },

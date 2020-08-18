@@ -76,7 +76,7 @@ router.get('/getuserinfo',(req,res)=>{
 router.get('/initfriend',(req,res)=>{
     let {groupid,userid,friendid} = req.query
     friendapi.initfriend(userid,friendid,groupid).then(result=>{
-        // console.log(result);
+        console.log(result);
         if(result[0].dataValues.flag == 0){
             res.send({
                 success:1,
