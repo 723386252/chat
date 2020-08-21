@@ -45,3 +45,30 @@ export function getgroup(params){
         headers: { 'Authorization': 'Bearer ' + getToken() }
     })
 }
+
+export function comfriend(params) {
+    return request({
+        url:'/friend/comfriend',
+        method:'get',
+        params,
+        headers: { 'Authorization': 'Bearer ' + getToken() }
+    })
+}
+
+export function replyrequest(params){
+    return request({
+        url:'/friend/replyrequest',
+        method:'get',
+        params,
+        headers: { 'Authorization': 'Bearer ' + getToken() }
+    })
+}
+
+export function addrequest(params){
+    return request({
+        url:'/friend/addrequest',
+        method:'get',
+        params,
+        headers: { 'Authorization': 'Bearer ' + getToken() }
+    })
+}

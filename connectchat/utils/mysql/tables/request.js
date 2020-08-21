@@ -19,8 +19,7 @@ const request = sequelize.define(
             allowNull:true
         },
         flag:{
-            type:DataTypes.INTEGER,
-            allowNull:false
+            type:DataTypes.INTEGER
         }
         
     },

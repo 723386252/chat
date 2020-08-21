@@ -8,7 +8,8 @@ router.get('/addgroup',(req,res)=>{
         if(result.length != 0){
             res.send({
                 success:1,
-                error_code:0
+                error_code:0,
+                data:result
             })
         }
         else{
@@ -25,6 +26,29 @@ router.get('/addgroup',(req,res)=>{
     })
 })
 
+router.get('/addrequest',(req,res)=>{
+    let {userid,friendid} = req.query
+    friendapi.addrequest(userid,friendid).then(result=>{
+        if(result != null){
+            res.send({
+                success:1,
+                error_code:0,
+                data:result[0]
+            })
+        }
+        else{
+            res.send({
+                success:0,
+                error_code:100
+            })
+        }
+    }).catch(err=>{
+        res.send({
+            success:0,
+            error_code:101
+        })
+    })
+})
 router.get('/getrequest',(req,res)=>{
     // console.log(req.query);
     let userid = req.query.userid
@@ -75,13 +99,21 @@ router.get('/getuserinfo',(req,res)=>{
 
 router.get('/initfriend',(req,res)=>{
     let {groupid,userid,friendid} = req.query
-    friendapi.initfriend(userid,friendid,groupid).then(result=>{
-        console.log(result);
+    friendapi.initfriend(userid,friendid).then(result=>{
         if(result[0].dataValues.flag == 0){
-            res.send({
-                success:1,
-                error_code:0
+            let friendnum = result[0].dataValues.friendnum
+            friendapi.alertgroup(friendnum,groupid).then(result=>{
+                res.send({
+                    success:1,
+                    error_code:0
+                })
+            }).catch(error=>{
+                res.send({
+                    success:0,
+                    error_code:101
+                })
             })
+            
         }
         else{
             res.send({
@@ -90,7 +122,6 @@ router.get('/initfriend',(req,res)=>{
             })
         }
     }).catch(error=>{
-        console.log(error);
         res.send({
             success:0,
             error_code:101
@@ -106,6 +137,68 @@ router.get('/getgroup',(req,res)=>{
                 success:1,
                 error_code:0,
                 data:result
+            })
+        }
+        else{
+            res.send({
+                success:0,
+                error_code:100
+            })
+        }
+    }).catch(error=>{
+        res.send({
+            success:0,
+            error_code:101
+        })
+    })
+})
+
+router.get('/comfriend',(req,res)=>{
+    let {friendid,userid} = req.query
+    Promise.all([
+        new Promise((resolve,reject)=>{
+            friendapi.comfriend(userid,friendid).then(result=>{
+                resolve(result)
+            }).catch(error=>{
+                reject(error)
+            })
+        }),
+        new Promise((resolve,reject)=>{
+            friendapi.comfriend(friendid,userid).then(result=>{
+                resolve(result)
+            }).catch(error=>{
+                reject(error)
+            })
+        })
+    ]).then(results=>{
+        if(results.length == 2){
+            res.send({
+                success:1,
+                error_code:0
+            })
+        }
+        else{
+            res.send({
+                success:0,
+                error_code:103
+            })
+        }
+    }).catch(error=>{
+        res.send({
+            success:0,
+            error_code:101
+        })
+    })
+    
+})
+
+router.get('/replyrequest',(req,res)=>{
+    let {requestid} = req.query
+    friendapi.replyrequest(requestid).then(result=>{
+        if(result.length == 1){
+            res.send({
+                success:1,
+                error_code:0
             })
         }
         else{

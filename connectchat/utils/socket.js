@@ -3,11 +3,11 @@ module.exports = function (server) {
   // 用于存储每个用户的socket，实现私聊的功能
     let arrAllSocket = {}
   // 穿件socket连接
-    io.on('connection', (socket) => {
+    io.on('connection', socket => {
       console.log('连接上了');
       // console.log(socket);
       // join函数 用于用户连接
-      socket.on('join', function (obj) {
+      socket.on('join', (obj)=> {
         console.log(obj.userid + 'join')
         // 保存每个用户的连接状态 用于私发消息
         arrAllSocket[obj.userid] = socket
@@ -27,6 +27,15 @@ module.exports = function (server) {
           //发送信息至指定的人
           target.emit('receivemsg', data)
         }
+      })
+      //好友请求
+      socket.on('sendrequest',data=>{
+        let target = arrAllSocket[data.friendid]
+        if(target){
+        target.emit('receiverequest',{
+          from:data.userid,
+          requestid:data.requestid
+        })}
       })
     })
   }

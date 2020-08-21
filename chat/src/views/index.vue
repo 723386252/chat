@@ -4,7 +4,7 @@
       <!-- <el-col :xs="0" :sm="5" :lg="5" :xl="5"><div> </div></el-col> -->
       <el-col :xs="{span:24,offset:0}" :sm="{span:14,offset:5}" style="height:100%">
       <div class="chatbox">
-          <infobox ref="infobox" class="infobox" @btn1click='btn1click'></infobox>
+          <infobox ref="infobox" class="infobox" @btn1click='btn1click' @btn2click='btn2click'></infobox>
           <div class="navigator">
               <img :src="user.portrait" alt="" class="myportrait" disabled>
               <div class="newrequest" :style="{'display':requestlist.length == 0 ? 'none':'block'}" @click="showrequest">{{requestlist.length}}</div>
@@ -46,7 +46,7 @@
 <script>
 import {getmyinfo} from '../network/api/chat'
 import infobox from '../components/infobox'
-import {addgroup,getrequest,getuserinfo,initfriend,getgroup} from '../network/api/friend'
+import {addgroup,getrequest,getuserinfo,initfriend,getgroup,comfriend,replyrequest,addrequest} from '../network/api/friend'
 export default {
 data(){
     return{
@@ -83,6 +83,18 @@ components:{
     receivemsg(data) {
       console.log('receivemsg');
       console.log(data);
+    },
+    receiverequest(data){
+        let flag = false
+        console.log(data);
+        this.requestlist.forEach(item=>{
+            if (item.from == data.from) {
+                flag = true
+            }
+        })
+        if(!flag){
+            this.requestlist.push({from:data.from,requestid:data.requestid})
+        }
     }
   },
   methods: {
@@ -98,7 +110,7 @@ components:{
     // 建立用户连接
     join() {
       this.$socket.emit("join", {
-        userid: this.userid
+        userid: this.user.userid
       });
     },
     // 发送消息给后台 用于私发消息
@@ -107,6 +119,9 @@ components:{
         userid: this.userid,
         msg: this.msg
       });
+    },
+    sendrequest(data){
+        this.$socket.emit('sendrequest',data)
     },
     clearinput(){
         this.inputtext = ''
@@ -174,8 +189,8 @@ components:{
               groupname:this.groupname
           }).then(res=>{
               if(res.success == 1){
-                  console.log('添加成功');
-                  this.usergroup.push(this.groupname)
+                  alert('添加成功')
+                  this.usergroup.push({groupid:res.data.groupid,groupname:res.data.groupname})
               }
               else{
                       console.log('添加失败');
@@ -185,15 +200,15 @@ components:{
       showrequest(){
           this.temprequest = this.requestlist.pop()
           getuserinfo({
-              userid:this.temprequest
+              userid:this.temprequest.from
           }).then(res=>{
               if(res.data[0].sex == 1){
                   res.data[0].sex = '男'
               }
+
               else{
                   res.data[0].sex = '女'
               }
-              
               this.$refs.infobox.showbox({
               type:'getrequest',
               user:res.data[0],
@@ -207,7 +222,48 @@ components:{
       },
       btn1click(data){
           if(data.type == 'sendrequest'){
-              console.log(data);
+          console.log(this.user.userid);
+          console.log(data.userinfo.userid);
+          console.log(this.user.userid === data.userinfo.user);
+              if(this.user.userid === data.userinfo.user){
+                  alert('不能添加自己为好友')
+              }else{
+                  initfriend({
+                  userid:this.user.userid,
+                  friendid:data.userinfo.userid,
+                  groupid:data.groupid
+              }).then(res=>{
+                  if(res.success == 0){
+                      if(res.error_code == 102){
+                          alert('好友已存在')
+                      }
+                      else if(res.error_code == 101){
+                          console.log('数据库读取错误');
+                      }
+                  }else{
+                      addrequest({userid:this.user.userid,friendid:data.userinfo.userid}).then(res=>{
+                          console.log(res);
+                          if(res.success == 1){
+                              this.sendrequest({
+                        userid:this.user.userid,
+                        friendid:data.userinfo.userid,
+                        requestid:res.data.requestid
+                      })
+                          }
+                          else{
+                              console.log('发送请求错误');
+                          }
+                      })
+                      
+                  }
+              }).catch(err=>{
+                  err
+                  console.log('请求错误');
+              })
+              }
+              
+          }
+          else if(data.type == 'getrequest'){
               initfriend({
                   userid:this.user.userid,
                   friendid:data.userinfo.userid,
@@ -220,10 +276,35 @@ components:{
                       else if(res.error_code == 101){
                           console.log('数据库读取错误');
                       }
+                  }else{
+                      comfriend({userid:this.user.userid,friendid:data.userinfo.userid}).then(res=>{
+                          if(res.success == 0){
+                              console.log('添加失败');
+                          }
+                          else{
+                              replyrequest({requestid:this.temprequest.requestid}).then(res=>{
+                                  if(res.success == 1){
+                                  alert('请求发送成功')
+                                  }
+                                  else{
+                                      alert('请求发送失败')
+                                  }
+                              })
+                          }
+                      })
                   }
               }).catch(err=>{
                   err
                   console.log('请求错误');
+              })
+          }
+      },
+      btn2click(data){
+          if(data.type == 'getrequest'){
+              replyrequest({requestid:this.temprequest.requestid}).then(res=>{
+                  if(res.success == 0){
+                      alert('拒绝失败')
+                  }
               })
           }
       }
@@ -233,13 +314,13 @@ created(){
         this.user.userid = res.data.userid
         this.user.username = res.data.username
         this.user.portrait = res.data.portrait
-
+        this.join()
         getrequest({userid:this.user.userid}).then(res=>{
         if(res.success == 1){
-            console.log(res);
             res.data.forEach(item=>{
-                this.requestlist.push(item.from)
+                this.requestlist.push({from:item.from,requestid:item.requestid})
             })
+            console.log(this.requestlist);
         }
     }).catch(err=>{
         err

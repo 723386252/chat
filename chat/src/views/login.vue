@@ -182,8 +182,14 @@ submitlogin({
           userid:this.loginid,
           password:this.loginpsw
         }).then(res=>{
-          setToken(res.data.token)
+          if(res.success == 1){
+                      setToken(res.data.token)
           this.$router.replace('/index')
+          }
+          else{
+            console.log('用户名或密码错误');
+          }
+
           
         })
     },

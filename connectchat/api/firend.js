@@ -13,7 +13,7 @@ const api = {
     },
     getrequest(userid){
         return request.findAll({
-            attributes:['from'],
+            attributes:['from','requestid'],
             where:{
                 'to':userid,
                 'flag':0
@@ -28,10 +28,8 @@ const api = {
             }
         })
     },
-    addfriend(userid,friendid,groupid){
-        
-},
-    initfriend(userid,friendid,groupid){
+
+    initfriend(userid,friendid){
         return friends.findOrCreate({
             where:{
                 userid,
@@ -40,8 +38,14 @@ const api = {
             defaults:{
                 userid,
                 friendid,
-                groupid,
                 flag:0
+            }
+        })
+    },
+    alertgroup(friendnum,groupid){
+        return friends.update({groupid},{
+            where:{
+                friendnum
             }
         })
     },
@@ -50,6 +54,30 @@ const api = {
             attributes:['groupname','groupid'],
             where:{
                 'userid':userid
+            }
+        })
+    },
+    comfriend(userid,friendid){
+        return friends.update({flag:1},{
+            where:{
+                userid,
+                friendid
+            }
+        })
+    },
+    replyrequest(requestid){
+        return request.update({flag:1},{
+            where:{
+                requestid
+            }
+        })
+    },
+    addrequest(from,to){
+        return request.findOrCreate({
+            where:{
+                from,
+                to,
+                flag:0
             }
         })
     }
