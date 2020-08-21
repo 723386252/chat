@@ -214,4 +214,38 @@ router.get('/replyrequest',(req,res)=>{
         })
     })
 })
+
+router.get('/getfriend',(req,res)=>{
+    let userid = req.query.userid
+    friendapi.getgroup(userid).then(result_0=>{
+            friendapi.getfriend(userid).then(result_1=>{
+                let friend = []
+                console.log(result_1);
+                for(let i = 0;i < result_0.length;i++){
+                    friend.push({groupid:result_0[i].dataValues.groupid,groupname:result_0[i].dataValues.groupname,friendlist:[]})
+                    for(let j = 0;j < result_1.length;j++){
+                        if(result_1[j].groupid == result_0[i].dataValues.groupid){
+                            friend[i].friendlist.push(result_1)
+                        }
+                    }
+                }
+                // console.log(friend);
+                res.send({
+                    success:1,
+                    error_code:0,
+                    data:friend
+                })
+            }).catch(error=>{
+                res.send({
+                    success:0,
+                    error_code:101
+                })
+            })
+    }).catch(error=>{
+        res.send({
+            success:0,
+            error_code:101
+        })
+    })
+})
 module.exports = router

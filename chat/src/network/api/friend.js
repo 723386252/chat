@@ -72,3 +72,12 @@ export function addrequest(params){
         headers: { 'Authorization': 'Bearer ' + getToken() }
     })
 }
+
+export function getfriend(params){
+    return request({
+        url:'/friend/getfriend',
+        method:'get',
+        params,
+        headers: { 'Authorization': 'Bearer ' + getToken() }
+    })
+}

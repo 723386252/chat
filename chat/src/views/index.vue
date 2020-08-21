@@ -18,8 +18,8 @@
                   <input type="text" v-model="groupname" class="groupinput" @blur="groupunfocus" @keyup.enter="group" :style="{'width':groupwidth + '%','visibility':showaddinput?'visible':'hidden','zIndex':Zaddinput}">
               </div>
               <el-collapse v-model="activeNames" @change="handleChange">
-  <el-collapse-item title="一致性 Consistency" name="1">
-    <div class="listitem">
+  <el-collapse-item v-for="(item,index) in friendlist" :key="item.groupid" :title="item.groupname" :name="index">
+    <div v-for="items in item.friendlist" :key="items.friendid">
                   <img :src='user.portrait' alt="" class="portrait">
                   <span class="listusername">用户名</span>
               </div>
@@ -46,7 +46,7 @@
 <script>
 import {getmyinfo} from '../network/api/chat'
 import infobox from '../components/infobox'
-import {addgroup,getrequest,getuserinfo,initfriend,getgroup,comfriend,replyrequest,addrequest} from '../network/api/friend'
+import {addgroup,getrequest,getuserinfo,initfriend,getgroup,comfriend,replyrequest,addrequest,getfriend} from '../network/api/friend'
 export default {
 data(){
     return{
@@ -64,7 +64,8 @@ data(){
         },
         requestlist:[],
         temprequest:'',
-        usergroup:[]
+        usergroup:[],
+        friendlist:[]
     }
 },
 components:{
@@ -222,10 +223,7 @@ components:{
       },
       btn1click(data){
           if(data.type == 'sendrequest'){
-          console.log(this.user.userid);
-          console.log(data.userinfo.userid);
-          console.log(this.user.userid === data.userinfo.user);
-              if(this.user.userid === data.userinfo.user){
+              if(this.user.userid === data.userinfo.userid){
                   alert('不能添加自己为好友')
               }else{
                   initfriend({
@@ -328,15 +326,19 @@ created(){
     })
         getgroup({userid:res.data.userid}).then(res=>{
             this.usergroup = res.data
-            console.log(this.usergroup);
         }).catch(err=>{
             err
             console.log('获取分组失败');
         })
+            getfriend({userid:res.data.userid}).then(res=>{
+        this.friendlist = res.data
+        console.log(this.friendlist);
+    })
     }).catch(err=>{
         err
         console.log('获取用户信息失败');
     })
+
     
 }
 }
