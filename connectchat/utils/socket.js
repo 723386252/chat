@@ -20,6 +20,9 @@ module.exports = function (server) {
               targetto.emit('receivemsg',res)
               targetfrom.emit('sendsuccess',res)
             }
+            else if(targetfrom){
+              targetfrom.emit('sendsuccess',res)
+            }
           })
           
       })

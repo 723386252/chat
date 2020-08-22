@@ -286,6 +286,7 @@ document.onkeydown =  event=> {
   position: relative;
   height: 100%;
   background-color: #f6f6f6;
+  user-select: none;
 }
 .rowstyle {
   position: relative;
@@ -302,6 +303,7 @@ document.onkeydown =  event=> {
   box-sizing: border-box;
   box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.1);
   background-color: white;
+  overflow: hidden;
 }
 .icon {
   position: relative;

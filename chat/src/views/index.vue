@@ -92,10 +92,18 @@ components:{
     // 用户后台调用，打印数据
     receivemsg(data) {
       this.chatrecord.push(data)
+              setTimeout(() => {
+            this.scrollbottom()
+        });
+        
     },
     sendsuccess(data){
         this.chatrecord.push(data)
         this.buttontype = 'success'
+        setTimeout(() => {
+            this.scrollbottom()
+        });
+        
         setTimeout(() => {
             this.buttontype = 'primary'
         }, 1000);
@@ -344,7 +352,15 @@ components:{
               friendid:this.nowchat.userid
           }).then(res=>{
               this.chatrecord = res.data
+              setTimeout(() => {
+                this.scrollbottom()
+              });
           })
+      },
+      scrollbottom(){
+          let chatcontent = document.querySelector('.chatcontent')
+          chatcontent.scrollTop = chatcontent.scrollHeight
+
       }
     },
 created(){
