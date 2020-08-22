@@ -11,7 +11,6 @@ let storage = multer.diskStorage({
     },
     filename:function(req,file,cb) {
         let time = new Date().getTime()
-        console.log(file.originalname);
       filename = time + file.originalname
       cb(null,filename)
 

@@ -19,22 +19,27 @@
               </div>
               <el-collapse v-model="activeNames" @change="handleChange">
   <el-collapse-item v-for="(item,index) in friendlist" :key="item.groupid" :title="item.groupname" :name="index">
-    <div v-for="items in item.friendlist" :key="items.friendid">
-                  <img :src='user.portrait' alt="" class="portrait">
-                  <span class="listusername">用户名</span>
+    <div @click="chat({userid:items.friendid,username:items.username})" v-for="(items,index) in item.friendlist" :key="items.friendid" class="frienditem" :style="index == 0 ? '    border-top:  1px solid rgba(100, 100, 100, 0.1);':''">
+                  <img :src='items.portrait' alt="" class="portrait">
+                  <span class="listusername">{{items.username}}</span>
               </div>
   </el-collapse-item>
 </el-collapse>
           </div>
           <div class="chat">
               <div class="chathead">
-                  <span class="chatname">用户名</span>
+                  <span class="chatname">{{nowchat.username}}</span>
               </div>
-              <div class="chatcontent"></div>
+              <div class="chatcontent">
+                  <div class="chatitem clearfix" v-for="item in chatrecord" :key="item.chatid">
+                      <div class="msgtime">{{item.time}}</div>
+                      <div :class="item.from == user.userid ? 'message_right':'message_left'">{{item.content}}</div>
+                  </div>
+              </div>
               <div class="chatinput">
                   <div class="tools"></div>
-  <textarea rows="5" id="textinput"></textarea>
-  <el-button type="primary" plain class="btn">发送</el-button>
+  <textarea rows="5" id="textinput" v-model="chattext" @keydown.enter="sendmsg"></textarea>
+  <el-button :type="buttontype" plain class="btn" @click="sendmsg">发送</el-button>
               </div>
           </div>
       </div>
@@ -47,6 +52,7 @@
 import {getmyinfo} from '../network/api/chat'
 import infobox from '../components/infobox'
 import {addgroup,getrequest,getuserinfo,initfriend,getgroup,comfriend,replyrequest,addrequest,getfriend} from '../network/api/friend'
+import {getchatrecord} from '../network/api/chat'
 export default {
 data(){
     return{
@@ -65,7 +71,14 @@ data(){
         requestlist:[],
         temprequest:'',
         usergroup:[],
-        friendlist:[]
+        friendlist:[],
+        nowchat:{
+            userid:'',
+            username:''
+        },
+        chattext:'',
+        chatrecord:[],
+        buttontype:'primary'
     }
 },
 components:{
@@ -74,20 +87,21 @@ components:{
     sockets: {
     // 连接后台socket
     connect() {
-      console.log('socket connected');
-    },
-    // 用户后台调用，添加数据
-    sendMessage(data) {
-      console.log(data);
+      this.$message('登陆成功');
     },
     // 用户后台调用，打印数据
     receivemsg(data) {
-      console.log('receivemsg');
-      console.log(data);
+      this.chatrecord.push(data)
+    },
+    sendsuccess(data){
+        this.chatrecord.push(data)
+        this.buttontype = 'success'
+        setTimeout(() => {
+            this.buttontype = 'primary'
+        }, 1000);
     },
     receiverequest(data){
         let flag = false
-        console.log(data);
         this.requestlist.forEach(item=>{
             if (item.from == data.from) {
                 flag = true
@@ -115,11 +129,22 @@ components:{
       });
     },
     // 发送消息给后台 用于私发消息
-    sendmsg() {
-      this.$socket.emit("sendmsg", {
-        userid: this.userid,
-        msg: this.msg
-      });
+    async sendmsg() {
+        if(this.nowchat.userid){
+            if(this.chattext){
+                await this.$socket.emit("sendmsg", {
+          from:this.user.userid,
+        to: this.nowchat.userid,
+        message: this.chattext
+      })
+            }
+            else{
+                this.$message.error('您输入的内容为空');
+            }
+           
+        }
+            this.chattext = ''
+      
     },
     sendrequest(data){
         this.$socket.emit('sendrequest',data)
@@ -190,11 +215,14 @@ components:{
               groupname:this.groupname
           }).then(res=>{
               if(res.success == 1){
-                  alert('添加成功')
+                  this.$message({
+                    message: '添加成功',
+                    type: 'success'
+        });
                   this.usergroup.push({groupid:res.data.groupid,groupname:res.data.groupname})
               }
               else{
-                      console.log('添加失败');
+                      this.$message.error('添加失败');
               }
           })
       },
@@ -224,7 +252,7 @@ components:{
       btn1click(data){
           if(data.type == 'sendrequest'){
               if(this.user.userid === data.userinfo.userid){
-                  alert('不能添加自己为好友')
+                  this.$message.error('不能添加自己为好友');
               }else{
                   initfriend({
                   userid:this.user.userid,
@@ -233,14 +261,13 @@ components:{
               }).then(res=>{
                   if(res.success == 0){
                       if(res.error_code == 102){
-                          alert('好友已存在')
+                          this.$message.error('好友已存在');
                       }
                       else if(res.error_code == 101){
-                          console.log('数据库读取错误');
+                          this.$message.error('数据库读取错误');
                       }
                   }else{
                       addrequest({userid:this.user.userid,friendid:data.userinfo.userid}).then(res=>{
-                          console.log(res);
                           if(res.success == 1){
                               this.sendrequest({
                         userid:this.user.userid,
@@ -249,14 +276,14 @@ components:{
                       })
                           }
                           else{
-                              console.log('发送请求错误');
+                              this.$message.error('发送请求错误');
                           }
                       })
                       
                   }
               }).catch(err=>{
                   err
-                  console.log('请求错误');
+                  this.$message.error('请求错误');
               })
               }
               
@@ -269,23 +296,26 @@ components:{
               }).then(res=>{
                   if(res.success == 0){
                       if(res.error_code == 102){
-                          console.log('好友已存在');
+                          this.$message.error('好友已存在');
                       }
                       else if(res.error_code == 101){
-                          console.log('数据库读取错误');
+                          this.$message.error('数据库读取错误');
                       }
                   }else{
                       comfriend({userid:this.user.userid,friendid:data.userinfo.userid}).then(res=>{
                           if(res.success == 0){
-                              console.log('添加失败');
+                              this.$message.error('添加失败');
                           }
                           else{
                               replyrequest({requestid:this.temprequest.requestid}).then(res=>{
                                   if(res.success == 1){
-                                  alert('请求发送成功')
+                                  this.$message({
+                                    message: '请求发送成功',
+                                    type: 'success'
+        });
                                   }
                                   else{
-                                      alert('请求发送失败')
+                                      this.$message.error('请求发送失败');
                                   }
                               })
                           }
@@ -293,7 +323,7 @@ components:{
                   }
               }).catch(err=>{
                   err
-                  console.log('请求错误');
+                  this.$message.error('请求错误');
               })
           }
       },
@@ -301,10 +331,20 @@ components:{
           if(data.type == 'getrequest'){
               replyrequest({requestid:this.temprequest.requestid}).then(res=>{
                   if(res.success == 0){
-                      alert('拒绝失败')
+                      this.$message.error('请重试');
                   }
               })
           }
+      },
+      chat(user){
+          this.nowchat.userid = user.userid,
+          this.nowchat.username = user.username
+          getchatrecord({
+              userid:this.user.userid,
+              friendid:this.nowchat.userid
+          }).then(res=>{
+              this.chatrecord = res.data
+          })
       }
     },
 created(){
@@ -318,25 +358,23 @@ created(){
             res.data.forEach(item=>{
                 this.requestlist.push({from:item.from,requestid:item.requestid})
             })
-            console.log(this.requestlist);
         }
     }).catch(err=>{
         err
-        console.log('获取请求信息失败');
+        this.$message.error('获取请求信息失败');
     })
         getgroup({userid:res.data.userid}).then(res=>{
             this.usergroup = res.data
         }).catch(err=>{
             err
-            console.log('获取分组失败');
+            this.$message.error('获取分组失败');
         })
             getfriend({userid:res.data.userid}).then(res=>{
         this.friendlist = res.data
-        console.log(this.friendlist);
     })
     }).catch(err=>{
         err
-        console.log('获取用户信息失败');
+        this.$message.error('获取用户信息失败');
     })
 
     
@@ -377,6 +415,10 @@ created(){
     float: left;
     box-sizing: border-box;
     box-shadow:  4px 0px 15px -15px #5E5E5E;
+    overflow: scroll;
+}
+.friendlist::-webkit-scrollbar{
+display:none;
 }
 .chat{
     height: 644px;
@@ -426,22 +468,9 @@ created(){
     display: block;
     float: left;
 }
-.listitem{
-    width: 100%;
-    height: 50px;
-    padding: 10px;
-    box-sizing: border-box;
-    border-top:  1px solid rgba(100, 100, 100, 0.15);
-    border-bottom: 1px solid rgba(100, 100, 100, 0.15);
-}
-.listitem:hover{
-    background-color: rgba(200, 200, 200, 0.1);
-    transition: 300ms all;
-}
 .portrait{
-    height: 30px;
-    width: 30px;
-    margin-top: 5px;
+    height: 46px;
+    width: 46px;
     float: left;
 }
 .listusername{
@@ -462,8 +491,11 @@ created(){
 .chatcontent{
     height: 415px;
     width: 100%;
-
+    overflow: scroll;
     box-sizing: border-box;
+}
+.chatcontent::-webkit-scrollbar{
+display:none;
 }
 .chatinput{
     position: relative;
@@ -505,6 +537,7 @@ created(){
     position: absolute;
     right: 10px;
     bottom: -5px;
+    transition: all 1s;
 }
 .addgroup{
     width: 100%;
@@ -581,6 +614,55 @@ transition: all 200ms;
     line-height: 20px;
     font-size: 14px;
 }
+.frienditem{
+    display: block;
+    width: 100%;
+    height: 60px;
+    padding: 7px;
+    box-sizing: border-box;
+            border-bottom:  1px solid rgba(100, 100, 100, 0.1);
+}
+.frienditem:hover{
+        background-color: rgba(200, 200, 200, 0.1);
+}
+.chatitem{
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+}
+.msgtime{
+    width: 100%;
+    text-align: center;
+        font-size: 14px;
+        color: rgba(100, 100, 100, 0.7);
+}
+.message_right{
+    padding: 7px;
+    max-width: 50%;
+    float: right;
+    clear: both;
+    box-sizing: border-box;
+    border:  1px solid rgba(100, 100, 100, 0.6);
+    border-radius: 8px;
+    margin-top: 5px;
+}
+.message_left{
+    padding: 7px;
+    max-width: 50%;
+    float: left;
+    clear: both;
+    box-sizing: border-box;
+    border:  1px solid rgba(100, 100, 100, 0.6);
+    border-radius: 8px;
+    margin-top: 5px;
+}
+.clearfix:after {
+    content:".";
+    display:block; 
+    height:0; 
+    visibility:hidden; 
+    clear:both; 
+    }
 @media screen and (max-width: 860px){
     .newrequest{
     height: 20px;

@@ -178,6 +178,13 @@ export default {
       }
     },
     login(){
+      if(!this.loginid){
+        this.$message.error('请输入登录ID');
+      }
+      else if(!this.loginpsw){
+        this.$message.error('请输入密码');
+      }
+      else{
 submitlogin({
           userid:this.loginid,
           password:this.loginpsw
@@ -187,13 +194,24 @@ submitlogin({
           this.$router.replace('/index')
           }
           else{
-            console.log('用户名或密码错误');
+            this.$message.error('用户名或密码错误');
           }
 
           
         })
+      }
     },
     register(){
+      if(!this.registerid){
+        this.$message.error('请输入注册ID');
+      }
+      else if(!this.registername){
+        this.$message.error('请输入注册用户名');
+      }
+      else if(!this.registerpsw){
+        this.$message.error('请输入注册密码');
+      }
+      else{
 submitregister({
               sex:this.registersex,
               userid:this.registerid,
@@ -203,13 +221,18 @@ submitregister({
           }).then(res=>{
             if(res.success == 0){
               this.goregister()
-              alert('注册失败')
+              this.$message.error('注册失败');
             }
             else{
               this.gologin()
-              alert('注册成功')
+              this.$message({
+          message: '注册成功',
+          type: 'success'
+        });
             }
           })
+      }
+
     },
     btnclick() {
       if (this.flag) {

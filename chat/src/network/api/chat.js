@@ -9,3 +9,12 @@ export function getmyinfo(){
         headers: { 'Authorization': 'Bearer ' + getToken() }
     })
 }
+
+export function getchatrecord(params) {
+    return request({
+        url:'/chat/getchatrecord',
+        method:'get',
+        params,
+        headers: { 'Authorization': 'Bearer ' + getToken() }
+    })
+  }

@@ -50,7 +50,6 @@ router.get('/addrequest',(req,res)=>{
     })
 })
 router.get('/getrequest',(req,res)=>{
-    // console.log(req.query);
     let userid = req.query.userid
     friendapi.getrequest(userid).then(result=>{
         if(result.length != 0){
@@ -220,16 +219,15 @@ router.get('/getfriend',(req,res)=>{
     friendapi.getgroup(userid).then(result_0=>{
             friendapi.getfriend(userid).then(result_1=>{
                 let friend = []
-                console.log(result_1);
                 for(let i = 0;i < result_0.length;i++){
                     friend.push({groupid:result_0[i].dataValues.groupid,groupname:result_0[i].dataValues.groupname,friendlist:[]})
                     for(let j = 0;j < result_1.length;j++){
                         if(result_1[j].groupid == result_0[i].dataValues.groupid){
-                            friend[i].friendlist.push(result_1)
+                            result_1[j].portrait = 'http://127.0.0.1:3000' + result_1[j].portrait
+                            friend[i].friendlist.push(result_1[j])
                         }
                     }
                 }
-                // console.log(friend);
                 res.send({
                     success:1,
                     error_code:0,

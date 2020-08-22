@@ -29,7 +29,6 @@ app.use(cookieParser());
 
 
 app.use(function(req, res, next) {
-  // console.log(req.get('origin'));
   res.header('Access-Control-Allow-Origin', req.get("origin")); //先允许跨域请求才能进来
   res.header("Access-Control-Allow-Credentials", true);//处理cookie信息，如果有，并且不对每次请求都新开一个session
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD");//允许的请求方法
