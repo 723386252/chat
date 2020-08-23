@@ -154,6 +154,9 @@ components:{
             this.chattext = ''
       
     },
+    reply(data){
+        this.$socket.emit('reply',data)
+    },
     sendrequest(data){
         this.$socket.emit('sendrequest',data)
     },
@@ -228,6 +231,7 @@ components:{
                     type: 'success'
         });
                   this.usergroup.push({groupid:res.data.groupid,groupname:res.data.groupname})
+                  this.friendlist.push({friendlist:[],groupid:res.data.groupid,groupname:res.data.groupname})
               }
               else{
                       this.$message.error('添加失败');
@@ -259,7 +263,7 @@ components:{
       },
       btn1click(data){
           if(data.type == 'sendrequest'){
-              if(this.user.userid === data.userinfo.userid){
+              if(this.user.userid == data.userinfo.userid){
                   this.$message.error('不能添加自己为好友');
               }else{
                   initfriend({
@@ -282,6 +286,10 @@ components:{
                         friendid:data.userinfo.userid,
                         requestid:res.data.requestid
                       })
+                      this.$message({
+                                    message: '发送成功',
+                                    type: 'success'
+                                    });
                           }
                           else{
                               this.$message.error('发送请求错误');
@@ -318,12 +326,17 @@ components:{
                               replyrequest({requestid:this.temprequest.requestid}).then(res=>{
                                   if(res.success == 1){
                                   this.$message({
-                                    message: '请求发送成功',
+                                    message: '添加成功',
                                     type: 'success'
-        });
+                                    });
+                                    this.friendlist.forEach(item=>{
+                                        if(item.groupid == data.groupid){
+                                            item.friendlist.push({friendid:data.userinfo.userid,groupid:data.groupid,portrait:data.portrait,sex:data.sex})
+                                        }
+                                    })
                                   }
                                   else{
-                                      this.$message.error('请求发送失败');
+                                      this.$message.error('添加失败');
                                   }
                               })
                           }

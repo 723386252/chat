@@ -69,7 +69,7 @@ export default {
             }
             else{
                 this.isshow = false
-                this.$emit('btn1click',{userinfo:this.userinfo,groupid:this.selectgroup,type:this.type})
+                this.$emit('btn1click',{userinfo:this.userinfo,groupid:this.selectgroup,type:this.type,portrait:this.userinfo.portrait,sex:this.userinfo.sex})
             setTimeout(() => {
                 this.selectgroup = ''
             });
